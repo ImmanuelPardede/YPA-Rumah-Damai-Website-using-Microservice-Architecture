@@ -15,14 +15,24 @@ class PenyakitController extends Controller
      */
     public function index()
     {
+        $jenis_penyakit = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:5550/api/jenis_penyakit");
-            $jenis_penyakit = $response->json();
+            if ($response->successful()) {
+                $jenis_penyakit = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $jenis_penyakit = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.penyakit.index', compact('jenis_penyakit'));
+        return view('admin.masterdata.penyakit.index', compact('jenis_penyakit', 'serverError'));
     }
+
+
+
 
     /**
      * Show the form for creating a new resource.

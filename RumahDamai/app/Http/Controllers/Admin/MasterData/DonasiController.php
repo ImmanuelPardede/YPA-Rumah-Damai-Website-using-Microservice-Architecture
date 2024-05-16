@@ -15,13 +15,24 @@ class DonasiController extends Controller
      */
     public function index()
     {
+        $donasi = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:4444/api/donasi");
-            $donasi = $response->json();
+            if ($response->successful()) {
+                $donasi = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $donasi = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.donasi.index', compact('donasi'));
+
+        return view('admin.masterdata.donasi.index', compact('donasi','serverError'));
+
+
+
     }
 
     /**

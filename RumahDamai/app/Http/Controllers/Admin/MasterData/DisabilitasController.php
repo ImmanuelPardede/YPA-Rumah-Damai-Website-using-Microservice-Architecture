@@ -15,13 +15,22 @@ class DisabilitasController extends Controller
      */
     public function index()
     {
+
+        $jenis_disabilitas = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:1110/api/jenis_disabilitas");
-            $jenis_disabilitas = $response->json();
+            if ($response->successful()) {
+                $jenis_disabilitas = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $jenis_disabilitas = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.disabilitas.index', compact('jenis_disabilitas'));
+            
+        return view('admin.masterdata.disabilitas.index', compact('jenis_disabilitas','serverError'));
     }
 
     /**

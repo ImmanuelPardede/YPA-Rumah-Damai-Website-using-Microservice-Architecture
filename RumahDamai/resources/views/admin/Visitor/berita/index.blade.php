@@ -1,8 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($berita))
-        <div class="marquee">
+    @if ($serverError)
             @include('error.500')
         </div>
     @else
@@ -17,9 +16,7 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        @if (empty($berita))
                             <a href="{{ route('berita.create') }}" class="btn btn-success mb-3">Tambahkan Berita</a>
-                        @endif
                     </div>
 
                     <div class="table-responsive">

@@ -28,7 +28,6 @@
                             <img src="{{ Storage::url($berita['image']) }}" class="news-image img-fluid">
                         @endif  
                         <div class="news-category-block">
-                            {{-- <a href="#" class="category-block-link">{{ $category['name'] }}</a> --}}
                         </div>
                     </div>
 
@@ -71,10 +70,10 @@
 
                 <h5 class="mt-5 mb-3">Recent news</h5>
 
-                @if(empty($recentNews))
-                <div class="marquee">
-                    <h1>Server oleng</h1>
-                </div>
+                @if($recentNewsError)
+                    <div class="marquee">
+                        <h1>Server oleng</h1>
+                    </div>
                 @else
                     @foreach ($recentNews as $item)
                         <div class="news-block news-block-two-col d-flex mt-4">
@@ -104,10 +103,10 @@
 
                 <div class="tags-block">
                     <h5 class="mb-3">Tags</h5>
-                    @if(empty($category))
-                    <div class="marquee">
-                        <h1>Server oleng</h1>
-                    </div>
+                    @if($categoryError)
+                        <div class="marquee">
+                            <h1>Server oleng</h1>
+                        </div>
                     @else
                         @foreach($category as $item)
                             <a href="#" class="tags-block-link">
@@ -115,9 +114,9 @@
                             </a>
                         @endforeach
                     @endif
+
                 </div>
             </div>
-
         </div>
     </div>
 </section>

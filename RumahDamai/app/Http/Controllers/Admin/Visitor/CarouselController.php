@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CarouselController extends Controller
 {
@@ -15,16 +16,25 @@ class CarouselController extends Controller
      */
     public function index()
     {
+        $carousel = [];
+        $serverError = false;
+    
         try {
             $response = Http::get("http://localhost:9001/api/carousel");
-            $carousel = $response->json();
+    
+            if ($response->successful()) {
+                $carousel = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $carousel = [];
+            $serverError = true;
         }
-            
-            return view('admin.visitor.carousel.index', compact('carousel'));
-        
+    
+        return view('admin.visitor.carousel.index', compact('carousel', 'serverError'));
     }
+    
+    
     /**
      * Show the form for creating a new resource.
      */

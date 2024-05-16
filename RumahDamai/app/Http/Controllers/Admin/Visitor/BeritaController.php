@@ -16,6 +16,7 @@ class BeritaController extends Controller
      */
     public function index()
     {
+        
         try {
             $response = Http::get('http://localhost:9003/api/category');
             $categories = collect($response->json())->map(function ($category) {
@@ -29,13 +30,21 @@ class BeritaController extends Controller
         }
 
 
+        $berita = [];
+        $serverError = false;
+    
         try {
             $response = Http::get("http://localhost:9004/api/news");
-            $berita = $response->json();
+            if ($response->successful()) {
+                $berita = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $berita = [];
+            $serverError = true;
         }
-        return view('admin.visitor.berita.index', compact('categories', 'berita'));
+
+        return view('admin.visitor.berita.index', compact('categories', 'berita','serverError'));
     }
 
     /**

@@ -1,7 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($categories))
+@if ($serverError)
         <div class="">
             @include('error.500')
         </div>

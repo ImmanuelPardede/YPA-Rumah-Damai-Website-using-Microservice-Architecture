@@ -15,14 +15,23 @@ class KategoriBeritaController extends Controller
      */
     public function index()
     {
+
+        $category = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:9003/api/category");
-            $category = $response->json();
+            if ($response->successful()) {
+                $category = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $category = [];
+            $serverError = true;
         }
         return view('admin.masterdata.kategoriBerita.index', compact('category'));
     }
+
 
     /**
      * Show the form for creating a new resource.

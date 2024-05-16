@@ -16,16 +16,27 @@ class HistoryController extends Controller
      */
     public function index()
     {
+        $history = [];
+        $serverError = false;
+        
             try {
                 $response = Http::get("http://localhost:9002/api/history");
-                $hitory = $response->json();
+                if ($response->successful()) {
+                    $history = $response->json();
+                } else {
+                    $serverError = true;
+                }
             } catch (\Exception $e) {
-                $history = [];
+                $serverError = true;
             }
-            return view('admin.visitor.history.index', compact('history'));
+
+            return view('admin.visitor.history.index', compact('history','serverError'));
   
         }
 
+
+    
+            
     /**
      * Show the form for creating a new resource.
      */

@@ -15,13 +15,21 @@ class SponsorshipController extends Controller
      */
     public function index()
     {
+
+        $jenis_sponsorship = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:6660/api/jenis_sponsorship");
-            $jenis_sponsorship = $response->json();
+            if ($response->successful()) {
+                $jenis_sponsorship = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $jenis_sponsorship = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.sponsorship.index', compact('jenis_sponsorship'));
+        return view('admin.masterdata.sponsorship.index', compact('jenis_sponsorship','serverError'));
     }
 
     /**

@@ -1,7 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($agama))
+@if ($serverError)
         <div class="">
             @include('error.500')
         </div>
@@ -17,9 +17,7 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        @if (!empty($agama))
                             <a href="{{ route('agama.create') }}" class="btn btn-success mb-3">Tambah Agama</a>
-                        @endif
                     </div>
 
                     <div class="table-responsive">

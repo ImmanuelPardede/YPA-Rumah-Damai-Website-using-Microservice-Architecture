@@ -12,19 +12,26 @@ class JenisKelaminController extends Controller
 {
     public function index()
     {
+        $jenis_kelamin = [];
+    $serverError = false;
+    
         try {
             $response = Http::get("http://localhost:2220/api/jenis_kelamin");
             $jenis_kelamin = $response->json();
+            if ($response->successful()) {
+                $jenis_kelamin = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $jenis_kelamin = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.jenisKelamin.index', compact('jenis_kelamin'));
+        return view('admin.masterdata.jenisKelamin.index', compact('jenis_kelamin','serverError'));
     }
 
-    public function create()
-    {
-        return view('admin.masterdata.jenisKelamin.create');
-    }
+    
+    
+
 
     public function show(string $id)
     {

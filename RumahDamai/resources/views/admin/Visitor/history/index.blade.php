@@ -1,8 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($carousel))
-        <div class="marquee">
+@if ($serverError)
             @include('error.500')
         </div>
     @else
@@ -18,11 +17,9 @@
                             </div>
                         @endif
 
-                        @if (!empty($carousel))
                             <!-- Tampilkan tombol "Add New Foundation History" -->
-                            <a href="{{ route('history.create') }}" class="btn btn-success mb-3">Add New Foundation
+                            <a href="{{ route('history.create') }}" class="btn btn-success mb-3">Add New
                                 History</a>
-                        @endif
                     </div>
 
                     <div class="table-responsive">

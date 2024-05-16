@@ -15,13 +15,20 @@ class PekerjaanController extends Controller
      */
     public function index()
     {
+        $jenis_pekerjaan = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:3330/api/jenis_pekerjaan");
-            $jenis_pekerjaan = $response->json();
+                    if ($response->successful()) {
+                $jenis_pekerjaan = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $jenis_pekerjaan = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.pekerjaan.index', compact('jenis_pekerjaan'));
+        return view('admin.masterdata.pekerjaan.index', compact('jenis_pekerjaan','serverError'));
     }
 
     /**
