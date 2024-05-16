@@ -15,14 +15,14 @@
             </div>
         @endif
 
-        <form action="{{ route('jenisKelamin.update', $jenisKelamin->id) }}" method="post">
+        <form action="{{ route('jenisKelamin.update', $jenis_kelamin['ID']) }}" method="post">
             @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="jenis_kelamin">Jenis Kelamin</label>
                 <input type="text" class="form-control" name="jenis_kelamin"
-                    value="{{ old('jenis_kelamin', $jenisKelamin->jenis_kelamin) }}">
+                    value="{{ old('jenis_kelamin', $jenis_kelamin['jenis_kelamin']) }}">
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

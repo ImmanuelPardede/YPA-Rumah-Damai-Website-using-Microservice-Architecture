@@ -20,12 +20,12 @@
 
             <div class="form-group">
                 <label for="jenis_penyakit">Jenis Penyakit<span style="color: red">*</span></label>
-                <input type="text" class="form-control" name="jenis_penyakit" value="{{ old('jenis_penyakit') }}" required>
+                <input type="text" class="form-control" name="jenis_penyakit" required>
             </div>
 
             <div class="form-group">
                 <label for="deskripsi">Deskripsi<span style="color: red">*</span></label>
-                <textarea class="form-control" name="deskripsi" required>{{ old('deskripsi') }}</textarea>
+                <textarea class="form-control" name="deskripsi" ></textarea>
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

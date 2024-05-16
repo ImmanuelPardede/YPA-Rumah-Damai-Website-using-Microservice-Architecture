@@ -26,18 +26,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($disabilitasList as $disabilitas)
+                        @forelse ($jenis_disabilitas as $jenis_disabilitas)
                             <tr>
-                                <td>{{ $disabilitas->jenis_disabilitas }}</td>
+                                <td>{{ $jenis_disabilitas['jenis_disabilitas'] }}</td>
                                 <td>
-                                    <a href="{{ route('disabilitas.show', $disabilitas->id) }}" class="btn btn-info">Detail</a>
-                                    <a href="{{ route('disabilitas.edit', $disabilitas->id) }}" class="btn btn-warning">Edit</a>
-                                    <form method="POST" id="deleteForm{{ $disabilitas->id }}" class="d-inline"
-                                        action="{{ route('disabilitas.destroy', $disabilitas->id) }}">
+                                    <a href="{{ route('disabilitas.show', $jenis_disabilitas['ID']) }}" class="btn btn-info">Detail</a>
+                                    <a href="{{ route('disabilitas.edit', $jenis_disabilitas['ID']) }}" class="btn btn-warning">Edit</a>
+                                    <form method="POST" id="deleteForm{{ $jenis_disabilitas['ID'] }}" class="d-inline"
+                                        action="{{ route('disabilitas.destroy', $jenis_disabilitas['ID']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger"
-                                            onclick="handleDeleteConfirmation('deleteForm{{ $disabilitas->id }}')">
+                                            onclick="handleDeleteConfirmation('deleteForm{{ $jenis_disabilitas['ID'] }}')">
                                             Hapus
                                         </button>
                                     </form>
@@ -45,15 +45,15 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2">Tidak ada Jenis Disabilitas.</td>
+                                <td colspan="2">Tidak ada Jenis jenis_disabilitas.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $disabilitasList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

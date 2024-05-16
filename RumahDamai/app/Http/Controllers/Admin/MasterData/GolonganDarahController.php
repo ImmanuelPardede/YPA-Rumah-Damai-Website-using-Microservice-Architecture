@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\GolonganDarah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class GolonganDarahController extends Controller
 {
@@ -13,12 +13,17 @@ class GolonganDarahController extends Controller
      */
     public function index()
     {
-        $golonganDarahList = GolonganDarah::orderBy('golongan_darah', 'asc')->paginate(7);
-        return view('admin.masterdata.golonganDarah.index', compact('golonganDarahList'));
+        $response = Http::get('http://localhost:9999/api/golongan_darah');
 
+        if ($response->successful()) {
+            $golongan_darah = $response->json();
+            return view('admin.masterdata.golonganDarah.index', compact('golongan_darah'));
+        } else {
+            return back()->with('error', 'Failed to fetch golongan_darah from API.');
+        }
     }
+
     /**
-     *
      * Show the form for creating a new resource.
      */
     public function create()
@@ -35,18 +40,32 @@ class GolonganDarahController extends Controller
             'golongan_darah' => 'required|string',
         ]);
 
-        GolonganDarah::create($request->all());
+        $data = [
+            'golongan_darah' => $request->input('golongan_darah'),
+        ];
 
-        return redirect()->route('golonganDarah.index')->with('success', 'Golongan Darah berhasil ditambahkan.');
+        $response = Http::post('http://localhost:9999/api/golongan_darah', $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.golonganDarah.index')->with('success', 'Data golongan_darah berhasil ditambahkan.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to create golongan_darah. Please try again.');
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        $darah = GolonganDarah::find($id);
-        return view('admin.masterdata.golonganDarah.show', compact('darah'));
+        $response = Http::get("http://localhost:9999/api/golongan_darah/{$id}");
+
+        if ($response->successful()) {
+            $golonganDarah = $response->json();
+            return view('admin.masterdata.golonganDarah.show', compact('golonganDarah'));
+        } else {
+            return back()->with('error', 'Failed to fetch golongan_darah details from API.');
+        }
     }
 
     /**
@@ -54,8 +73,14 @@ class GolonganDarahController extends Controller
      */
     public function edit($id)
     {
-        $golonganDarah = GolonganDarah::findOrFail($id);
-        return view('admin.masterdata.golonganDarah.edit', compact('golonganDarah'));
+        $response = Http::get("http://localhost:9999/api/golongan_darah/{$id}");
+
+        if ($response->successful()) {
+            $golonganDarah = $response->json();
+            return view('admin.masterdata.golonganDarah.edit', compact('golonganDarah'));
+        } else {
+            return back()->with('error', 'Failed to fetch golongan_darah for editing from API.');
+        }
     }
 
     /**
@@ -67,10 +92,17 @@ class GolonganDarahController extends Controller
             'golongan_darah' => 'required|string',
         ]);
 
-        $golonganDarah = GolonganDarah::find($id);
-        $golonganDarah->update($request->all());
+        $data = [
+            'golongan_darah' => $request->input('golongan_darah'),
+        ];
 
-        return redirect()->route('golonganDarah.index')->with('success', 'Golongan Darah berhasil diperbarui.');
+        $response = Http::put("http://localhost:9999/api/golongan_darah/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.golonganDarah.index')->with('success', 'golonganDarah updated successfully.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to update golongan_darah. Please try again.');
+        }
     }
 
     /**
@@ -78,9 +110,12 @@ class GolonganDarahController extends Controller
      */
     public function destroy($id)
     {
-        $golonganDarah = GolonganDarah::findOrFail($id);
-        $golonganDarah->delete();
+        $response = Http::delete("http://localhost:9999/api/golongan_darah/{$id}");
 
-        return redirect()->route('golonganDarah.index')->with('success', 'Golongan Darah berhasil dihapus.');
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.golonganDarah.index')->with('success', 'golonganDarah deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete golonganDarah. Please try again.');
+        }
     }
 }

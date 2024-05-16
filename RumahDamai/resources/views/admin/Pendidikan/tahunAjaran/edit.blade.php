@@ -14,14 +14,13 @@
             </div>
         @endif
 
-        <form action="{{ route('tahunAjaran.update', $tahunAjaran->id) }}" method="post">
+        <form action="{{ route('admin.pendidikan.tahunAjaran.update', $tahun_ajaran['ID']) }}" method="POST">
             @csrf
             @method('PUT')
 
             <div class="form-group">
-                <label for="tahun_ajaran">Tahun Kurikulum</label>
-                <input type="year" class="form-control" name="tahun_ajaran"
-                    value="{{ old('tahun_ajaran', $tahunAjaran->tahun_ajaran) }}">
+                <label for="tahun_ajaran">Tahun Ajaran</label>
+                <input type="text" class="form-control" name="tahun_ajaran" value="{{$tahun_ajaran['tahun_ajaran'] }}">
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

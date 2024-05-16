@@ -5,13 +5,21 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JenisKelamin;
+use Illuminate\Support\Facades\Http;
+
 
 class JenisKelaminController extends Controller
 {
     public function index()
     {
-        $jenisKelaminList = JenisKelamin::orderBy('jenis_kelamin', 'asc')->paginate(7);
-        return view('admin.masterdata.jenisKelamin.index', compact('jenisKelaminList'));
+        $response = Http::get('http://localhost:2220/api/jenis_kelamin');
+
+        if ($response->successful()) {
+            $jenis_kelamin = $response->json();
+            return view('admin.masterdata.jenisKelamin.index', compact('jenis_kelamin'));
+        } else {
+            return back()->with('error', 'Failed to fetch jenisKelamin from API.');
+        }
     }
 
     public function create()
@@ -31,34 +39,60 @@ class JenisKelaminController extends Controller
             'jenis_kelamin' => 'required|string',
         ]);
 
-        JenisKelamin::create($request->all());
+        $data = [
+            'jenis_kelamin' => $request->input('jenis_kelamin'), // Assuming 'agama' is the correct field name
+            // 'image' => $imagePath ?? null, // Assuming the API accepts 'image'
+        ];
 
-        return redirect()->route('jenisKelamin.index')->with('success', 'Jenis kelamin berhasil ditambahkan.');
+        // Make the HTTP request
+        $response = Http::post('http://localhost:2220/api/jenis_kelamin', $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.jenisKelamin.index')->with('success', 'Data jenis_kelamin berhasil ditambahkan.');
+        } else {
+            // jenis_kelamin creation failed
+            return back()->withInput()->with('error', 'Failed to create jenis_kelamin. Please try again.');
+        }
     }
 
     public function edit($id)
     {
-        $jenisKelamin = JenisKelamin::findOrFail($id);
-        return view('admin.masterdata.jenisKelamin.edit', compact('jenisKelamin'));
+        $response = Http::get("http://localhost:2220/api/jenis_kelamin/{$id}");
+        $jenis_kelamin = $response->json();
+
+        return view('admin.masterdata.jenisKelamin.edit', compact('jenis_kelamin'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'jenis_kelamin' => 'required|string',
+            // Add more validation rules for other fields if needed
         ]);
 
-        $jenisKelamin = JenisKelamin::find($id);
-        $jenisKelamin->update($request->all());
+        // Prepare the data for the HTTP request
+        $data = [
+            'jenis_kelamin' => $request->input('jenis_kelamin'),
+        ];
 
-        return redirect()->route('jenisKelamin.index')->with('success', 'Jenis kelamin berhasil diperbarui.');
+        // Make the HTTP request to update the Agama record
+        $response = Http::put("http://localhost:2220/api/jenis_kelamin/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.jenisKelamin.index')->with('success', 'jenisKelamin updated successfully.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to update jenisKelamin. Please try again.');
+        }
     }
 
     public function destroy($id)
     {
-        $jenisKelamin = JenisKelamin::findOrFail($id);
-        $jenisKelamin->delete();
+        $response = Http::delete("http://localhost:2220/api/jenis_kelamin/{$id}");
 
-        return redirect()->route('jenisKelamin.index')->with('success', 'Jenis kelamin berhasil dihapus.');
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.jenisKelamin.index')->with('success', 'jenisKelamin deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete jenisKelamin. Please try again.');
+        }
     }
 }

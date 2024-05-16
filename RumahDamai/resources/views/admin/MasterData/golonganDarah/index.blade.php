@@ -29,17 +29,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($golonganDarahList as $darah)
+                        @forelse ($golongan_darah as $darah)
                         <tr>
-                            <td>{{ $darah->golongan_darah }}</td>
+                            <td>{{ $darah['golongan_darah'] }}</td> <!-- Fix variable name -->
                             <td>
-                                <a href="{{ route('golonganDarah.edit', $darah->id) }}" class="btn btn-warning">Edit</a>
-                                <form method="POST" id="deleteForm{{ $darah->id }}" class="d-inline"
-                                    action="{{ route('golonganDarah.destroy', $darah->id) }}">
+                                <a href="{{ route('golonganDarah.edit', $darah['ID']) }}" class="btn btn-warning">Edit</a> <!-- Fix variable name -->
+                                <form method="POST" id="deleteForm{{ $darah['ID'] }}" class="d-inline"
+                                    action="{{ route('golonganDarah.destroy', $darah['ID']) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" class="btn btn-danger"
-                                        onclick="handleDeleteConfirmation('deleteForm{{ $darah->id }}')">
+                                        onclick="handleDeleteConfirmation('deleteForm{{ $darah['ID'] }}')">
                                         Hapus
                                     </button>
                                 </form>
@@ -47,15 +47,15 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="2">Tidak ada data kelamin.</td>
+                            <td colspan="2">Tidak ada data golongan darah.</td> <!-- Fix message -->
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $golonganDarahList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

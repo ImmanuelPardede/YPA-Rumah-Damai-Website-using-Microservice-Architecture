@@ -26,17 +26,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pendidikanList as $pendidikan)
+                        @forelse ($jenis_pendidikan as $jenis_pendidikan)
                             <tr>
-                                <td>{{ $pendidikan->tingkat_pendidikan }}</td>
+                                <td>{{ $jenis_pendidikan['jenis_pendidikan'] }}</td>
                                 <td>
-                                    <a href="{{ route('pendidikan.edit', $pendidikan->id) }}" class="btn btn-warning">Edit</a>
-                                    <form method="POST" id="deleteForm{{ $pendidikan->id }}" class="d-inline"
-                                        action="{{ route('pendidikan.destroy', $pendidikan->id) }}">
+                                    <a href="{{ route('pendidikan.edit', $jenis_pendidikan['ID']) }}" class="btn btn-warning">Edit</a>
+                                    <form method="POST" id="deleteForm{{ $jenis_pendidikan['ID'] }}" class="d-inline"
+                                        action="{{ route('pendidikan.destroy', $jenis_pendidikan['ID']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger"
-                                            onclick="handleDeleteConfirmation('deleteForm{{ $pendidikan->id }}')">
+                                            onclick="handleDeleteConfirmation('deleteForm{{ $jenis_pendidikan['ID'] }}')">
                                             Hapus
                                         </button>
                                     </form>
@@ -50,9 +50,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $pendidikanList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

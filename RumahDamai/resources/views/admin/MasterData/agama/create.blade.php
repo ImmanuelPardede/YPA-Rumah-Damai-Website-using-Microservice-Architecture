@@ -15,12 +15,12 @@
             </div>
         @endif
 
-        <form action="{{ route('agama.store') }}" method="post">
+        <form action="{{ route('agama.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
                 <label for="agama">Nama Agama</label>
-                <input type="text" class="form-control" name="agama" value="{{ old('agama') }}">
+                <input type="text" class="form-control" name="agama">
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

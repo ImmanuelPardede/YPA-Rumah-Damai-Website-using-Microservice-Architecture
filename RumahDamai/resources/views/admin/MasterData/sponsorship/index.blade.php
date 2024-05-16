@@ -26,18 +26,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($sponsorshipList as $sponsorship)
+                        @forelse ($jenis_sponsorship as $jenis_sponsorship)
                             <tr>
-                                <td>{{ $sponsorship->jenis_sponsorship }}</td>
+                                <td>{{ $jenis_sponsorship['jenis_sponsorship'] }}</td>
                                 <td>
-                                    <a href="{{ route('sponsorship.show', $sponsorship->id) }}" class="btn btn-info">Detail</a>
-                                    <a href="{{ route('sponsorship.edit', $sponsorship->id) }}" class="btn btn-warning">Edit</a>
-                                    <form method="POST" id="deleteForm{{ $sponsorship->id }}" class="d-inline"
-                                        action="{{ route('sponsorship.destroy', $sponsorship->id) }}">
+                                    <a href="{{ route('sponsorship.show', $jenis_sponsorship['ID']) }}" class="btn btn-info">Detail</a>
+                                    <a href="{{ route('sponsorship.edit', $jenis_sponsorship['ID']) }}" class="btn btn-warning">Edit</a>
+                                    <form method="POST" id="deleteForm{{ $jenis_sponsorship['ID'] }}" class="d-inline"
+                                        action="{{ route('sponsorship.destroy', $jenis_sponsorship['ID']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger"
-                                            onclick="handleDeleteConfirmation('deleteForm{{ $sponsorship->id }}')">
+                                            onclick="handleDeleteConfirmation('deleteForm{{ $jenis_sponsorship['ID'] }}')">
                                             Hapus
                                         </button>
                                     </form>
@@ -51,9 +51,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $sponsorshipList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

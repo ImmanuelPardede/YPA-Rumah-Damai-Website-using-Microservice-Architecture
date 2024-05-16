@@ -4,7 +4,6 @@
     <div class="container">
         <h2>Edit Agama</h2>
 
-        <!-- Tampilkan pesan kesalahan validasi jika ada -->
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -15,13 +14,13 @@
             </div>
         @endif
 
-        <form action="{{ route('agama.update', $agama->id) }}" method="post">
+        <form action="{{ route('admin.masterdata.agama.update', $agama['ID']) }}" method="POST">
             @csrf
             @method('PUT')
 
             <div class="form-group">
-                <label for="nama_agama">Nama Agama</label>
-                <input type="text" class="form-control" name="agama" value="{{ old('agama', $agama->agama) }}">
+                <label for="agama">Nama Agama</label>
+                <input type="text" class="form-control" name="agama" value="{{ $agama['agama'] }}">
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

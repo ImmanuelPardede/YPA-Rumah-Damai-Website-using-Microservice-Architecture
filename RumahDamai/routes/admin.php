@@ -59,18 +59,82 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::resource('/masterdata/agama', AgamaController::class);
+    Route::get('/admin/masterdata/agama', [AgamaController::class, 'index'])->name('admin.masterdata.agama.index');
+    Route::post('/admin/masterdata/agama', [AgamaController::class, 'store'])->name('agama.store');
+    Route::get('/admin/masterdata/agama/{id}/edit', [AgamaController::class, 'edit'])->name('admin.masterdata.agama.edit');
+    Route::put('/admin/masterdata/agama/{id}', [AgamaController::class, 'update'])->name('admin.masterdata.agama.update');
+    Route::delete('/admin/masterdata/agama/{id}', [AgamaController::class, 'destroy'])->name('admin.masterdata.agama.destroy');
+
+
     Route::resource('/masterdata/jenisKelamin', JenisKelaminController::class);
+    Route::get('/admin/masterdata/jenisKelamin', [JenisKelaminController::class, 'index'])->name('admin.masterdata.jenisKelamin.index');
+    Route::post('/admin/masterdata/jenisKelamin', [JenisKelaminController::class, 'store'])->name('jenisKelamin.store');
+        Route::get('/admin/masterdata/jenisKelamin/{id}/edit', [JenisKelaminController::class, 'edit'])->name('admin.masterdata.jenisKelamin.edit');
+    Route::put('/admin/masterdata/jenisKelamin/{id}', [JenisKelaminController::class, 'update'])->name('admin.masterdata.jenisKelamin.update');
+    Route::delete('/admin/masterdata/jenisKelamin/{id}', [JenisKelaminController::class, 'destroy'])->name('admin.masterdata.jenisKelamin.destroy');
+
+
     Route::resource('/masterdata/golonganDarah', GolonganDarahController::class);
+    Route::get('/admin/masterdata/golonganDarah', [GolonganDarahController::class, 'index'])->name('admin.masterdata.golonganDarah.index');
+    Route::post('/admin/masterdata/golonganDarah', [GolonganDarahController::class, 'store'])->name('golonganDarah.store');
+    Route::get('/admin/masterdata/golonganDarah/{id}/edit', [GolonganDarahController::class, 'edit'])->name('admin.masterdata.golonganDarah.edit');
+    Route::put('/admin/masterdata/golonganDarah/{id}', [GolonganDarahController::class, 'update'])->name('admin.masterdata.golonganDarah.update');
+    Route::delete('/admin/masterdata/golonganDarah/{id}', [GolonganDarahController::class, 'destroy'])->name('admin.masterdata.golonganDarah.destroy');
+
+
     Route::resource('/masterdata/kebutuhanDisabilitas', KebutuhanDisabilitasController::class);
+
     Route::resource('/masterdata/lokasiTugas', LokasiTugasController::class);
+
     Route::resource('/masterdata/pendidikan', PendidikanController::class);
+    Route::get('/admin/masterdata/pendidikan', [PendidikanController::class, 'index'])->name('admin.masterdata.pendidikan.index');
+    Route::post('/admin/masterdata/pendidikan', [PendidikanController::class, 'store'])->name('pendidikan.store');
+    Route::get('/admin/masterdata/pendidikan/{id}/edit', [PendidikanController::class, 'edit'])->name('admin.masterdata.pendidikan.edit');
+    Route::put('/admin/masterdata/pendidikan/{id}', [PendidikanController::class, 'update'])->name('admin.masterdata.pendidikan.update');
+    Route::delete('/admin/masterdata/pendidikan/{id}', [PendidikanController::class, 'destroy'])->name('admin.masterdata.pendidikan.destroy');
+
+
     Route::resource('/masterdata/pekerjaan', PekerjaanController::class);
+    Route::get('/admin/masterdata/pekerjaan', [PekerjaanController::class, 'index'])->name('admin.masterdata.pekerjaan.index');
+    Route::post('/admin/masterdata/pekerjaan', [PekerjaanController::class, 'store'])->name('pekerjaan.store');
+    Route::get('/admin/masterdata/pekerjaan/{id}/edit', [PekerjaanController::class, 'edit'])->name('admin.masterdata.pekerjaan.edit');
+    Route::put('/admin/masterdata/pekerjaan/{id}', [PekerjaanController::class, 'update'])->name('admin.masterdata.pekerjaan.update');
+    Route::delete('/admin/masterdata/pekerjaan/{id}', [PekerjaanController::class, 'destroy'])->name('admin.masterdata.pekerjaan.destroy');
+
+
     Route::resource('/masterdata/sponsorship', SponsorshipController::class);
+    Route::get('/admin/masterdata/sponsorship', [SponsorshipController::class, 'index'])->name('admin.masterdata.sponsorship.index');
+    Route::post('/admin/masterdata/sponsorship', [SponsorshipController::class, 'store'])->name('sponsorship.store');
+    Route::get('/admin/masterdata/sponsorship/{id}/edit', [SponsorshipController::class, 'edit'])->name('admin.masterdata.sponsorship.edit');
+    Route::put('/admin/masterdata/sponsorship/{id}', [SponsorshipController::class, 'update'])->name('admin.masterdata.sponsorship.update');
+    Route::delete('/admin/masterdata/sponsorship/{id}', [SponsorshipController::class, 'destroy'])->name('admin.masterdata.sponsorship.destroy');
+
+
     Route::resource('/masterdata/disabilitas', DisabilitasController::class);
+    Route::get('/admin/masterdata/disabilitas', [DisabilitasController::class, 'index'])->name('admin.masterdata.disabilitas.index');
+    Route::post('/admin/masterdata/disabilitas', [DisabilitasController::class, 'store'])->name('disabilitas.store');
+    Route::get('/admin/masterdata/disabilitas/{id}/edit', [DisabilitasController::class, 'edit'])->name('admin.masterdata.disabilitas.edit');
+    Route::put('/admin/masterdata/disabilitas/{id}', [DisabilitasController::class, 'update'])->name('admin.masterdata.disabilitas.update');
+    Route::delete('/admin/masterdata/disabilitas/{id}', [DisabilitasController::class, 'destroy'])->name('admin.masterdata.disabilitas.destroy');
+
+
     Route::resource('/masterdata/donasi', DonasiController::class);
-    Route::resource('/masterdata/penyakit', PenyakitController::class);
+    Route::get('/admin/masterdata/donasi', [DonasiController::class, 'index'])->name('admin.masterdata.donasi.index');
+    Route::post('/admin/masterdata/donasi', [DonasiController::class, 'store'])->name('donasi.store');
+    Route::get('/admin/masterdata/donasi/{id}/edit', [DonasiController::class, 'edit'])->name('admin.masterdata.donasi.edit');
+    Route::put('/admin/masterdata/donasi/{id}', [DonasiController::class, 'update'])->name('admin.masterdata.donasi.update');
+    Route::delete('/admin/masterdata/donasi/{id}', [DonasiController::class, 'destroy'])->name('admin.masterdata.donasi.destroy');
+
+
     Route::resource('/masterdata/kategoriBerita', KategoriBeritaController::class);
+
+
     Route::resource('/masterdata/penyakit', PenyakitController::class);
+    Route::get('/admin/masterdata/penyakit', [PenyakitController::class, 'index'])->name('admin.masterdata.penyakit.index');
+    Route::post('/admin/masterdata/penyakit', [PenyakitController::class, 'store'])->name('penyakit.store');
+    Route::get('/admin/masterdata/penyakit/{id}/edit', [PenyakitController::class, 'edit'])->name('admin.masterdata.penyakit.edit');
+    Route::put('/admin/masterdata/penyakit/{id}', [PenyakitController::class, 'update'])->name('admin.masterdata.penyakit.update');
+    Route::delete('/admin/masterdata/penyakit/{id}', [PenyakitController::class, 'destroy'])->name('admin.masterdata.penyakit.destroy');
 
 
     /*
@@ -89,7 +153,17 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     */
     Route::resource('/pendidikan/tahunKurikulum', TahunKurikulumController::class);
     Route::resource('/pendidikan/kelas', KelasController::class);
+
+
     Route::resource('/pendidikan/tahunAjaran', TahunAjaranController::class);
+    Route::get('/admin/pendidikan/tahunAjaran', [TahunAjaranController::class, 'index'])->name('admin.pendidikan.tahunAjaran.index');
+    Route::post('/admin/pendidikan/tahunAjaran', [TahunAjaranController::class, 'store'])->name('tahunAjaran.store');
+    Route::get('/admin/pendidikan/tahunAjaran/{id}/edit', [TahunAjaranController::class, 'edit'])->name('admin.pendidikan.tahunAjaran.edit');
+    Route::put('/admin/pendidikan/tahunAjaran/{id}', [TahunAjaranController::class, 'update'])->name('admin.pendidikan.tahunAjaran.update');
+    Route::delete('/admin/pendidikan/tahunAjaran/{id}', [TahunAjaranController::class, 'destroy'])->name('admin.pendidikan.tahunAjaran.destroy');
+
+
+
     Route::resource('/pendidikan/semesterTahunAjaran', SemesterTahunAjaranController::class);
     Route::resource('/pendidikan/mingguPembelajaran', MingguPembelajaranController::class);
 

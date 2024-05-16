@@ -26,17 +26,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pekerjaanList as $pekerjaan)
+                        @forelse ($jenis_pekerjaan as $jenis_pekerjaan)
                             <tr>
-                                <td>{{ $pekerjaan->jenis_pekerjaan }}</td>
+                                <td>{{ $jenis_pekerjaan['jenis_pekerjaan'] }}</td>
                                 <td>
-                                    <a href="{{ route('pekerjaan.edit', $pekerjaan->id) }}" class="btn btn-warning">Edit</a>
-                                    <form method="POST" id="deleteForm{{ $pekerjaan->id }}" class="d-inline"
-                                        action="{{ route('pekerjaan.destroy', $pekerjaan->id) }}">
+                                    <a href="{{ route('pekerjaan.edit', $jenis_pekerjaan['ID']) }}" class="btn btn-warning">Edit</a>
+                                    <form method="POST" id="deleteForm{{ $jenis_pekerjaan['ID'] }}" class="d-inline"
+                                        action="{{ route('pekerjaan.destroy', $jenis_pekerjaan['ID']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger"
-                                            onclick="handleDeleteConfirmation('deleteForm{{ $pekerjaan->id }}')">
+                                            onclick="handleDeleteConfirmation('deleteForm{{ $jenis_pekerjaan['ID'] }}')">
                                             Hapus
                                         </button>
                                     </form>
@@ -50,9 +50,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $pekerjaanList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

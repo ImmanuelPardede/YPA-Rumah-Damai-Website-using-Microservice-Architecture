@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\MasterData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Pendidikan;
+use Illuminate\Support\Facades\Http;
+
 
 class PendidikanController extends Controller
 {
@@ -13,9 +15,14 @@ class PendidikanController extends Controller
      */
     public function index()
     {
-        $pendidikanList = Pendidikan::orderBy('tingkat_pendidikan', 'asc')->paginate(7);
-        return view('admin.masterdata.pendidikan.index', compact('pendidikanList'));
+        $response = Http::get('http://localhost:4440/api/jenis_pendidikan');
 
+        if ($response->successful()) {
+            $jenis_pendidikan = $response->json();
+            return view('admin.masterdata.pendidikan.index', compact('jenis_pendidikan'));
+        } else {
+            return back()->with('error', 'Failed to fetch pendidikan from API.');
+        }
     }
 
     /**
@@ -32,12 +39,23 @@ class PendidikanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tingkat_pendidikan' => 'required|string',
+            'jenis_pendidikan' => 'required|string',
         ]);
 
-        Pendidikan::create($request->all());
+        $data = [
+            'jenis_pendidikan' => $request->input('jenis_pendidikan'), // Assuming 'pendidikan' is the correct field name
+            // 'image' => $imagePath ?? null, // Assuming the API accepts 'image'
+        ];
 
-        return redirect()->route('pendidikan.index')->with('success', 'Tingkat Pendidikan berhasil ditambahkan.');
+        // Make the HTTP request
+        $response = Http::post('http://localhost:4440/api/jenis_pendidikan', $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.pendidikan.index')->with('success', 'Data pendidikan berhasil ditambahkan.');
+        } else {
+            // pendidikan creation failed
+            return back()->withInput()->with('error', 'Failed to create pendidikan. Please try again.');
+        }
     }
 
     /**
@@ -55,8 +73,10 @@ class PendidikanController extends Controller
      */
     public function edit(string $id)
     {
-        $tingkatPendidikan = Pendidikan::findOrFail($id);
-        return view('admin.masterdata.pendidikan.edit', compact('tingkatPendidikan'));
+        $response = Http::get("http://localhost:4440/api/jenis_pendidikan/{$id}");
+        $jenis_pendidikan = $response->json();
+
+        return view('admin.masterdata.pendidikan.edit', compact('jenis_pendidikan'));
     }
 
     /**
@@ -65,13 +85,23 @@ class PendidikanController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'tingkat_pendidikan' => 'required|string',
+            'jenis_pendidikan' => 'required|string',
+            // Add more validation rules for other fields if needed
         ]);
 
-        $tingkatPendidikan = Pendidikan::find($id);
-        $tingkatPendidikan->update($request->all());
+        // Prepare the data for the HTTP request
+        $data = [
+            'jenis_pendidikan' => $request->input('jenis_pendidikan'),
+        ];
 
-        return redirect()->route('pendidikan.index')->with('success', 'Tingkat Pendidikan berhasil diperbarui.');
+        // Make the HTTP request to update the pendidikan record
+        $response = Http::put("http://localhost:4440/api/jenis_pendidikan/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.pendidikan.index')->with('success', 'pendidikan updated successfully.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to update pendidikan. Please try again.');
+        }
     }
 
     /**
@@ -79,9 +109,12 @@ class PendidikanController extends Controller
      */
     public function destroy(string $id)
     {
-        $tingkatPendidikan = Pendidikan::findOrFail($id);
-        $tingkatPendidikan->delete();
+        $response = Http::delete("http://localhost:4440/api/jenis_pendidikan/{$id}");
 
-        return redirect()->route('pendidikan.index')->with('success', 'Tingkat Pendidikan berhasil dihapus.');
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.pendidikan.index')->with('success', 'pendidikan deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete pendidikan. Please try again.');
+        }
     }
 }

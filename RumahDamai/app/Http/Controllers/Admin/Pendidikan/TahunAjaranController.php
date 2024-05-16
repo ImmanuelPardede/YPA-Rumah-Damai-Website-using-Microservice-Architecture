@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\Pendidikan;
 use App\Http\Controllers\Controller;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
 
 class TahunAjaranController extends Controller
 {
@@ -13,8 +15,14 @@ class TahunAjaranController extends Controller
      */
     public function index()
     {
-        $tahunAjaranList = TahunAjaran::orderBy('tahun_ajaran', 'asc')->paginate(7);
-        return view('admin.pendidikan.tahunAjaran.index', compact('tahunAjaranList'));
+        $response = Http::get('http://localhost:7770/api/tahun_ajaran');
+
+        if ($response->successful()) {
+            $tahun_ajaran = $response->json();
+            return view('admin.pendidikan.tahunAjaran.index', compact('tahun_ajaran'));
+        } else {
+            return back()->with('error', 'Failed to fetch tahunAjaran from API.');
+        }
     }
 
     /**
@@ -31,14 +39,22 @@ class TahunAjaranController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tahun_ajaran' => 'required|string',
+            'tahun_ajaran' => 'required|int',
         ]);
 
-        TahunAjaran::create([
-            'tahun_ajaran' => $request->tahun_ajaran,
-        ]);
+        $data = [
+            'tahun_ajaran' => $request->input('tahun_ajaran'),
+        ];
 
-        return redirect()->route('tahunAjaran.index')->with('success', 'Tahun Ajaran berhasil ditambahkan.');
+        // Make the HTTP request
+        $response = Http::post('http://localhost:7770/api/tahun_ajaran', $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.pendidikan.tahunAjaran.index')->with('success', 'Data tahunAjaran berhasil ditambahkan.');
+        } else {
+            // tahunAjaran creation failed
+            return back()->withInput()->with('error', 'Failed to create tahunAjaran. Please try again.');
+        }
     }
 
     /**
@@ -46,8 +62,14 @@ class TahunAjaranController extends Controller
      */
     public function show($id)
     {
-        $tahunAjaran = TahunAjaran::findOrFail($id);
-        return view('admin.pendidikan.tahunAjaran.show', compact('tahunAjaran'));
+        $response = Http::get("http://localhost:7770/api/tahun_ajaran/{$id}");
+
+        if ($response->successful()) {
+            $tahun_ajaran = $response->json();
+            return view('admin.pendidikan.tahunAjaran.show', compact('tahun_ajaran'));
+        } else {
+            return back()->with('error', 'Failed to fetch tahunAjaran from API.');
+        }
     }
 
     /**
@@ -55,8 +77,10 @@ class TahunAjaranController extends Controller
      */
     public function edit($id)
     {
-        $tahunAjaran = TahunAjaran::findOrFail($id);
-        return view('admin.pendidikan.tahunAjaran.edit', compact('tahunAjaran'));
+        $response = Http::get("http://localhost:7770/api/tahun_ajaran/{$id}");
+        $tahun_ajaran = $response->json();
+
+        return view('admin.pendidikan.tahunAjaran.edit', compact('tahun_ajaran'));
     }
 
     /**
@@ -65,15 +89,22 @@ class TahunAjaranController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'tahun_ajaran' => 'required|string',
+            'tahun_ajaran' => 'required|int',
         ]);
 
-        $tahunAjaran = TahunAjaran::findOrFail($id);
-        $tahunAjaran->update([
-            'tahun_ajaran' => $request->tahun_ajaran,
-        ]);
+        // Prepare the data for the HTTP request
+        $data = [
+            'tahun_ajaran' => $request->input('tahun_ajaran'),
+        ];
 
-        return redirect()->route('tahunAjaran.index')->with('success', 'Tahun Ajaran berhasil diperbarui.');
+        // Make the HTTP request to update the tahunAjaran record
+        $response = Http::put("http://localhost:7770/api/tahun_ajaran/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.pendidikan.tahunAjaran.index')->with('success', 'tahunAjaran updated successfully.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to update tahunAjaran. Please try again.');
+        }
     }
 
     /**
@@ -81,9 +112,12 @@ class TahunAjaranController extends Controller
      */
     public function destroy($id)
     {
-        $tahunAjaran = TahunAjaran::findOrFail($id);
-        $tahunAjaran->delete();
+        $response = Http::delete("http://localhost:7770/api/tahun_ajaran/{$id}");
 
-        return redirect()->route('tahunAjaran.index')->with('success', 'Tahun Ajaran berhasil dihapus.');
+        if ($response->successful()) {
+            return redirect()->route('admin.pendidikan.tahunAjaran.index')->with('success', 'tahunAjaran deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete tahunAjaran. Please try again.');
+        }
     }
 }

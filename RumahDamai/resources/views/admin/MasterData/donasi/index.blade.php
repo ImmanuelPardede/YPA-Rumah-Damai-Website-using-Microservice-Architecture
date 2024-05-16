@@ -26,18 +26,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($donasiList as $donasi)
+                        @forelse ($donasi as $donasi)
                             <tr>
-                                <td>{{ $donasi->jenis_donasi }}</td>
+                                <td>{{ $donasi['donasi'] }}</td>
                                 <td>
-                                    <a href="{{ route('donasi.show', $donasi->id) }}" class="btn btn-info">Detail</a>
-                                    <a href="{{ route('donasi.edit', $donasi->id) }}" class="btn btn-warning">Edit</a>
-                                    <form method="POST" id="deleteForm{{ $donasi->id }}" class="d-inline"
-                                        action="{{ route('donasi.destroy', $donasi->id) }}">
+                                    <a href="{{ route('donasi.show', $donasi['ID']) }}" class="btn btn-info">Detail</a>
+                                    <a href="{{ route('donasi.edit', $donasi['ID']) }}" class="btn btn-warning">Edit</a>
+                                    <form method="POST" id="deleteForm{{ $donasi['ID'] }}" class="d-inline"
+                                        action="{{ route('donasi.destroy', $donasi['ID']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger"
-                                            onclick="handleDeleteConfirmation('deleteForm{{ $donasi->id }}')">
+                                            onclick="handleDeleteConfirmation('deleteForm{{ $donasi['ID'] }}')">
                                             Hapus
                                         </button>
                                     </form>
@@ -51,9 +51,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $donasiList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

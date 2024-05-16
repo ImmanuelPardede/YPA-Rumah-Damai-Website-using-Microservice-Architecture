@@ -1,3 +1,4 @@
+@extends('layouts.management.master')
 
 @section('content')
     <div class="container">
@@ -14,22 +15,22 @@
             </div>
         @endif
 
-        <form action="{{ route('disabilitas.store') }}" method="post">
+        <form action="{{ route('disabilitas.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
                 <label for="kategori_disabilitas">Kategori Disabilitas<span style="color: red">*</span></label>
-                <input type="text" class="form-control" name="kategori_disabilitas" value="{{ old('kategori_disabilitas') }}" required>
+                <input type="text" class="form-control" name="kategori_disabilitas"required>
             </div>
 
             <div class="form-group">
                 <label for="jenis_disabilitas">Jenis Disabilitas<span style="color: red">*</span></label>
-                <input type="text" class="form-control" name="jenis_disabilitas" value="{{ old('jenis_disabilitas') }}" required>
+                <input type="text" class="form-control" name="jenis_disabilitas"required>
             </div>
 
             <div class="form-group">
                 <label for="deskripsi">Deskripsi<span style="color: red">*</span></label>
-                <textarea class="form-control" name="deskripsi" required>{{ old('deskripsi') }}</textarea>
+                <textarea class="form-control" name="deskripsi"></textarea>
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

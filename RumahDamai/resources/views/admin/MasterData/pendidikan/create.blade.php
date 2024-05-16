@@ -19,8 +19,8 @@
             @csrf
 
             <div class="form-group">
-                <label for="tingkat_pendidikan">Jenjang Pendidikan</label>
-                <input type="text" class="form-control" name="tingkat_pendidikan" value="{{ old('tingkat_pendidikan') }}" required>
+                <label for="jenis_pendidikan">Jenjang Pendidikan</label>
+                <input type="text" class="form-control" name="jenis_pendidikan" required>
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

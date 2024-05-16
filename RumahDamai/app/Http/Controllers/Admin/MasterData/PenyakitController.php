@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\MasterData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Penyakit;
+use Illuminate\Support\Facades\Http;
+
 
 class PenyakitController extends Controller
 {
@@ -13,8 +15,14 @@ class PenyakitController extends Controller
      */
     public function index()
     {
-        $penyakitList = Penyakit::orderBy('jenis_penyakit', 'asc')->paginate(7);
-        return view('admin.masterdata.penyakit.index', compact('penyakitList'));
+        $response = Http::get('http://localhost:5550/api/jenis_penyakit');
+
+        if ($response->successful()) {
+            $jenis_penyakit = $response->json();
+            return view('admin.masterdata.penyakit.index', compact('jenis_penyakit'));
+        } else {
+            return back()->with('error', 'Failed to fetch penyakit from API.');
+        }
 
     }
 
@@ -33,11 +41,23 @@ class PenyakitController extends Controller
     {
         $request->validate([
             'jenis_penyakit' => 'required|string',
+            'deskripsi' => 'required|string',
         ]);
 
-        Penyakit::create($request->all());
+        $data = [
+            'jenis_penyakit' => $request->input('jenis_penyakit'),
+            'deskripsi' => $request->input('deskripsi'),
+        ];
 
-        return redirect()->route('penyakit.index')->with('success', 'Jenis Penyakit berhasil ditambahkan.');
+        // Make the HTTP request
+        $response = Http::post('http://localhost:5550/api/jenis_penyakit', $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.penyakit.index')->with('success', 'Data penyakit berhasil ditambahkan.');
+        } else {
+            // penyakit creation failed
+            return back()->withInput()->with('error', 'Failed to create penyakit. Please try again.');
+        }
     }
 
     /**
@@ -45,9 +65,14 @@ class PenyakitController extends Controller
      */
     public function show(string $id)
     {
+        $response = Http::get("http://localhost:5550/api/jenis_penyakit/{$id}");
 
-        $penyakit = Penyakit::find($id);
-        return view('admin.masterdata.penyakit.show', compact('penyakit'));
+        if ($response->successful()) {
+            $jenis_penyakit = $response->json();
+            return view('admin.masterdata.penyakit.show', compact('jenis_penyakit'));
+        } else {
+            return back()->with('error', 'Failed to fetch penyakit from API.');
+        }
     }
 
     /**
@@ -55,8 +80,10 @@ class PenyakitController extends Controller
      */
     public function edit(string $id)
     {
-        $jenisPenyakit = Penyakit::findOrFail($id);
-        return view('admin.masterdata.penyakit.edit', compact('jenisPenyakit'));
+        $response = Http::get("http://localhost:5550/api/jenis_penyakit/{$id}");
+        $jenis_penyakit = $response->json();
+
+        return view('admin.masterdata.penyakit.edit', compact('jenis_penyakit'));
     }
 
     /**
@@ -66,12 +93,24 @@ class PenyakitController extends Controller
     {
         $request->validate([
             'jenis_penyakit' => 'required|string',
+            'deskripsi' => 'required|string',
         ]);
 
-        $jenisPenyakit = Penyakit::find($id);
-        $jenisPenyakit->update($request->all());
+        // Prepare the data for the HTTP request
+        $data = [
+            'jenis_penyakit' => $request->input('jenis_penyakit'),
+            'deskripsi' => $request->input('deskripsi'),
 
-        return redirect()->route('penyakit.index')->with('success', 'Jenis Penyakit berhasil diperbarui.');
+        ];
+
+        // Make the HTTP request to update the penyakit record
+        $response = Http::put("http://localhost:5550/api/jenis_penyakit/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.penyakit.index')->with('success', 'penyakit updated successfully.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to update penyakit. Please try again.');
+        }
     }
 
     /**
@@ -79,9 +118,12 @@ class PenyakitController extends Controller
      */
     public function destroy(string $id)
     {
-        $jenisPenyakit = Penyakit::findOrFail($id);
-        $jenisPenyakit->delete();
+        $response = Http::delete("http://localhost:5550/api/jenis_penyakit/{$id}");
 
-        return redirect()->route('penyakit.index')->with('success', 'Jenis Penyakit berhasil dihapus.');
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.penyakit.index')->with('success', 'penyakit deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete penyakit. Please try again.');
+        }
     }
 }

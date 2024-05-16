@@ -20,7 +20,7 @@
 
             <div class="form-group">
                 <label for="jenis_kelamin">Nama Kelamin</label>
-                <input type="text" class="form-control" name="jenis_kelamin" value="{{ old('jenis_kelamin') }}" required>
+                <input type="text" class="form-control" name="jenis_kelamin" required>
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

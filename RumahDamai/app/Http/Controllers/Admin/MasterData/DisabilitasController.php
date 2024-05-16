@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Models\Disabilitas;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+
 
 class DisabilitasController extends Controller
 {
@@ -13,9 +15,14 @@ class DisabilitasController extends Controller
      */
     public function index()
     {
-        $disabilitasList = Disabilitas::orderBy('jenis_disabilitas', 'asc')->paginate(7);
-        return view('admin.masterdata.disabilitas.index', compact('disabilitasList'));
+        $response = Http::get('http://localhost:1110/api/jenis_disabilitas');
 
+        if ($response->successful()) {
+            $jenis_disabilitas = $response->json();
+            return view('admin.masterdata.disabilitas.index', compact('jenis_disabilitas'));
+        } else {
+            return back()->with('error', 'Failed to fetch jenis_disabilitas from API.');
+        }
     }
 
     /**
@@ -32,12 +39,26 @@ class DisabilitasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'kategori_disabilitas' => 'required|string',
             'jenis_disabilitas' => 'required|string',
+            'deskripsi' => 'required|string',
         ]);
 
-        Disabilitas::create($request->all());
+        $data = [
+            'kategori_disabilitas' => $request->input('kategori_disabilitas'),
+            'jenis_disabilitas' => $request->input('jenis_disabilitas'),
+            'deskripsi' => $request->input('deskripsi'),
+        ];
 
-        return redirect()->route('disabilitas.index')->with('success', 'Jenis Disabilitas berhasil ditambahkan.');
+        // Make the HTTP request
+        $response = Http::post('http://localhost:1110/api/jenis_disabilitas', $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.disabilitas.index')->with('success', 'Data disabilitas berhasil ditambahkan.');
+        } else {
+            // disabilitas creation failed
+            return back()->withInput()->with('error', 'Failed to create disabilitas. Please try again.');
+        }
     }
 
     /**
@@ -46,8 +67,14 @@ class DisabilitasController extends Controller
     public function show(string $id)
     {
 
-        $disabilitas = Disabilitas::find($id);
-        return view('admin.masterdata.disabilitas.show', compact('disabilitas'));
+        $response = Http::get("http://localhost:1110/api/jenis_disabilitas/{$id}");
+
+        if ($response->successful()) {
+            $jenis_disabilitas = $response->json();
+            return view('admin.masterdata.disabilitas.show', compact('jenis_disabilitas'));
+        } else {
+            return back()->with('error', 'Failed to fetch disabilitas from API.');
+        }
     }
 
     /**
@@ -55,8 +82,10 @@ class DisabilitasController extends Controller
      */
     public function edit(string $id)
     {
-        $jenisDisabilitas = Disabilitas::findOrFail($id);
-        return view('admin.masterdata.disabilitas.edit', compact('jenisDisabilitas'));
+        $response = Http::get("http://localhost:1110/api/jenis_disabilitas/{$id}");
+        $jenis_disabilitas = $response->json();
+
+        return view('admin.masterdata.disabilitas.edit', compact('jenis_disabilitas'));
     }
 
     /**
@@ -65,13 +94,26 @@ class DisabilitasController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
+            'kategori_disabilitas' => 'required|string',
             'jenis_disabilitas' => 'required|string',
+            'deskripsi' => 'required|string',
         ]);
 
-        $jenisDisabilitas = Disabilitas::find($id);
-        $jenisDisabilitas->update($request->all());
+        // Prepare the data for the HTTP request
+        $data = [
+            'kategori_disabilitas' => $request->input('kategori_disabilitas'),
+            'jenis_disabilitas' => $request->input('jenis_disabilitas'),
+            'deskripsi' => $request->input('deskripsi'),
+        ];
 
-        return redirect()->route('disabilitas.index')->with('success', 'Jenis Disabilitas berhasil diperbarui.');
+        // Make the HTTP request to update the disabilitas record
+        $response = Http::put("http://localhost:1110/api/jenis_disabilitas/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.disabilitas.index')->with('success', 'disabilitas updated successfully.');
+        } else {
+            return back()->withInput()->with('error', 'Failed to update disabilitas. Please try again.');
+        }
     }
 
     /**
@@ -79,9 +121,12 @@ class DisabilitasController extends Controller
      */
     public function destroy(string $id)
     {
-        $jenisDisabilitas = Disabilitas::findOrFail($id);
-        $jenisDisabilitas->delete();
+        $response = Http::delete("http://localhost:1110/api/jenis_disabilitas/{$id}");
 
-        return redirect()->route('disabilitas.index')->with('success', 'Jenis Disabilitas berhasil dihapus.');
+        if ($response->successful()) {
+            return redirect()->route('admin.masterdata.disabilitas.index')->with('success', 'disabilitas deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete disabilitas. Please try again.');
+        }
     }
 }

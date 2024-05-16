@@ -26,18 +26,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($penyakitList as $penyakit)
+                        @forelse ($jenis_penyakit as $jenis_penyakit)
                             <tr>
-                                <td>{{ $penyakit->jenis_penyakit }}</td>
+                                <td>{{ $jenis_penyakit['jenis_penyakit'] }}</td>
                                 <td>
-                                    <a href="{{ route('penyakit.show', $penyakit->id) }}" class="btn btn-info">Detail</a>
-                                    <a href="{{ route('penyakit.edit', $penyakit->id) }}" class="btn btn-warning">Edit</a>
-                                    <form method="POST" id="deleteForm{{ $penyakit->id }}" class="d-inline"
-                                        action="{{ route('penyakit.destroy', $penyakit->id) }}">
+                                    <a href="{{ route('penyakit.show', $jenis_penyakit['ID']) }}" class="btn btn-info">Detail</a>
+                                    <a href="{{ route('penyakit.edit', $jenis_penyakit['ID']) }}" class="btn btn-warning">Edit</a>
+                                    <form method="POST" id="deleteForm{{ $jenis_penyakit['ID'] }}" class="d-inline"
+                                        action="{{ route('penyakit.destroy', $jenis_penyakit['ID']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-danger"
-                                            onclick="handleDeleteConfirmation('deleteForm{{ $penyakit->id }}')">
+                                            onclick="handleDeleteConfirmation('deleteForm{{ $jenis_penyakit['ID'] }}')">
                                             Hapus
                                         </button>
                                     </form>
@@ -51,9 +51,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
+            {{-- <div class="d-flex justify-content-end">
                 {{ $penyakitList->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

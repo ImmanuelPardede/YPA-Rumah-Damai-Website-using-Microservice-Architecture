@@ -15,19 +15,19 @@
             </div>
         @endif
 
-        <form action="{{ route('sponsorship.update', $jenisSponsorship->id) }}" method="post">
+        <form action="{{ route('sponsorship.update', $jenis_sponsorship['ID']) }}" method="post">
             @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="jenis_sponsorship">Jenis Sponsorship</label>
                 <input type="text" class="form-control" name="jenis_sponsorship"
-                    value="{{ old('jenis_sponsorship', $jenisSponsorship->jenis_sponsorship) }}">
+                    value="{{ old('jenis_sponsorship', $jenis_sponsorship['jenis_sponsorship'] ?? '') }}">
             </div>
 
             <div class="form-group">
                 <label for="deskripsi">Deskripsi</label>
-                <textarea class="form-control" name="deskripsi">{{ old('deskripsi', $jenisSponsorship->deskripsi) }}</textarea>
+                <textarea class="form-control" name="deskripsi">{{ old('deskripsi', $jenis_sponsorship['deskripsi'] ?? '') }}</textarea>
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

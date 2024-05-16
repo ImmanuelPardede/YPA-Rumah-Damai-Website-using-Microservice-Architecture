@@ -24,18 +24,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($tahunAjaranList as $tahunAjaran)
+                            @forelse ($tahun_ajaran as $tahun_ajaran)
                                 <tr>
-                                    <td>{{ $tahunAjaran->tahun_ajaran }}</td>
+                                    <td>{{ $tahun_ajaran['tahun_ajaran'] }}</td>
                                     <td>
-                                        <a href="{{ route('tahunAjaran.edit', $tahunAjaran->id) }}"
+                                        <a href="{{ route('admin.pendidikan.tahunAjaran.edit', $tahun_ajaran['ID']) }}"
                                             class="btn btn-warning">Edit</a>
-                                        <form method="POST" id="deleteForm{{ $tahunAjaran->id }}" class="d-inline"
-                                            action="{{ route('tahunAjaran.destroy', $tahunAjaran->id) }}">
+                                        <form method="POST" id="deleteForm{{ $tahun_ajaran['ID'] }}" class="d-inline"
+                                            action="{{ route('admin.pendidikan.tahunAjaran.destroy', $tahun_ajaran['ID']) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-danger"
-                                                onclick="handleDeleteConfirmation('deleteForm{{ $tahunAjaran->id }}')">
+                                                onclick="handleDeleteConfirmation('deleteForm{{ $tahun_ajaran['ID'] }}')">
                                                 Hapus
                                             </button>
                                         </form>
@@ -49,9 +49,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-end">
+                {{-- <div class="d-flex justify-content-end">
                     {{ $tahunAjaranList->links('pagination::bootstrap-4') }}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

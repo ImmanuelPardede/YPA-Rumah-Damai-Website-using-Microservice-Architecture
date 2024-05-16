@@ -15,12 +15,12 @@
             </div>
         @endif
 
-        <form action="{{ route('tahunAjaran.store') }}" method="post">
+        <form action="{{ route('tahunAjaran.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
                 <label for="tahun_ajaran">Tahun Ajaran</label>
-                <input type="year" class="form-control" name="tahun_ajaran" value="{{ old('tahun_ajaran') }}" min="1900" max="9999">
+                <input type="text" class="form-control" name="tahun_ajaran">
             </div>
 
             <a href="{{ url()->previous() }}" class="btn btn-primary">Batal</a>

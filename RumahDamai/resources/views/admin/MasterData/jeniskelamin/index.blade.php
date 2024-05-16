@@ -26,18 +26,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($jenisKelaminList as $kelamin)
+                            @forelse ($jenis_kelamin as $jenis)
                                 <tr>
-                                    <td>{{ $kelamin->jenis_kelamin }}</td>
+                                    <td>{{ $jenis['jenis_kelamin'] }}</td>
                                     <td>
-                                        <a href="{{ route('jenisKelamin.edit', $kelamin->id) }}"
+                                        <a href="{{ route('jenisKelamin.edit', $jenis['ID']) }}"
                                             class="btn btn-warning">Edit</a>
-                                        <form method="POST" id="deleteForm{{ $kelamin->id }}" class="d-inline"
-                                            action="{{ route('jenisKelamin.destroy', $kelamin->id) }}">
+                                        <form method="POST" id="deleteForm{{ $jenis['ID'] }}" class="d-inline"
+                                            action="{{ route('jenisKelamin.destroy', $jenis['ID']) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-danger"
-                                                onclick="handleDeleteConfirmation('deleteForm{{ $kelamin->id }}')">
+                                                onclick="handleDeleteConfirmation('deleteForm{{ $jenis['ID'] }}')">
                                                 Hapus
                                             </button>
                                         </form>
@@ -51,9 +51,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-end">
+                {{-- <div class="d-flex justify-content-end">
                     {{ $jenisKelaminList->links('pagination::bootstrap-4') }}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
