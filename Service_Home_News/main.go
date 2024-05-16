@@ -30,5 +30,5 @@ func main() {
 		newsRoutes.PUT("/:id", newsController.Update)
 		newsRoutes.DELETE("/:id", newsController.Delete)
 	}
-	r.Run(":9004")
+	r.Run(":9992")
 }

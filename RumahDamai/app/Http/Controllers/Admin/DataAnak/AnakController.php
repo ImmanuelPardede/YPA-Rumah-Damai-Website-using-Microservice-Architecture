@@ -21,28 +21,116 @@ use Illuminate\Support\Facades\Storage;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Http;
+use Exception;
+
+
 
 class AnakController extends Controller
 {
 
     public function index()
     {
+        try {
+            // Mendapatkan data dari API agama
+            $responseAgama = Http::get('http://localhost:2222/api/agama');
+            $agama = collect($responseAgama->json())->map(function ($item) {
+                return [
+                    'id' => $item['ID'],
+                    'agama' => $item['agama']
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            $agama = [];
+        }
+
+        try {
+            // Mendapatkan data dari API jenis kelamin
+            $responseJenisKelamin = Http::get('http://localhost:2220/api/jenis_kelamin');
+            $jenis_kelamin = collect($responseJenisKelamin->json())->map(function ($item) {
+                return [
+                    'id' => $item['ID'],
+                    'jenis_kelamin' => $item['jenis_kelamin']
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            $jenis_kelamin = [];
+        }
+
+        try {
+            // Mendapatkan data dari API golongan darah
+            $responseGolonganDarah = Http::get('http://localhost:9999/api/golongan_darah');
+            $golongan_darah = collect($responseGolonganDarah->json())->map(function ($item) {
+                return [
+                    'id' => $item['ID'],
+                    'golongan_darah' => $item['golongan_darah']
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            $golongan_darah = [];
+        }
+
+        try {
+            // Mendapatkan data dari API jenis disabilitas
+            $responseJenisDisabilitas = Http::get('http://localhost:1110/api/jenis_disabilitas');
+            $jenis_disabilitas = collect($responseJenisDisabilitas->json())->map(function ($item) {
+                return [
+                    'id' => $item['ID'],
+                    'jenis_disabilitas' => $item['jenis_disabilitas']
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            $jenis_disabilitas = [];
+        }
+
+        // Mendapatkan data anak dari database
         $anakList = Anak::orderBy('created_at', 'desc')->paginate(7);
-        return view('admin.DataAnak.Anak.index', compact('anakList'));
+
+        return view('admin.DataAnak.Anak.index', compact('anakList', 'agama', 'jenis_kelamin', 'golongan_darah', 'jenis_disabilitas'));
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        $response = Http::get('http://localhost:2222/api/agama');
+        $agama = collect($response->json())->map(function ($agama) {
+            return [
+                'id' => $agama['ID'],
+                'agama' => $agama['agama']
+            ];
+        })->toArray();
+
+        $response = Http::get('http://localhost:2220/api/jenis_kelamin');
+        $jenis_kelamin = collect($response->json())->map(function ($jenis_kelamin) {
+            return [
+                'id' => $jenis_kelamin['ID'],
+                'jenis_kelamin' => $jenis_kelamin['jenis_kelamin']
+            ];
+        })->toArray();
+
+        $response = Http::get('http://localhost:9999/api/golongan_darah');
+        $golongan_darah = collect($response->json())->map(function ($golongan_darah) {
+            return [
+                'id' => $golongan_darah['ID'],
+                'golongan_darah' => $golongan_darah['golongan_darah']
+            ];
+        })->toArray();
+
+        $response = Http::get('http://localhost:1110/api/jenis_disabilitas');
+        $jenis_disabilitas = collect($response->json())->map(function ($jenis_disabilitas) {
+            return [
+                'id' => $jenis_disabilitas['ID'],
+                'jenis_disabilitas' => $jenis_disabilitas['jenis_disabilitas']
+            ];
+        })->toArray();
+
         $lokasiTugas = LokasiTugas::all();
-        $agama = Agama::all();
-        $jenisKelamin = JenisKelamin::all();
-        $golonganDarah = GolonganDarah::all();
-        $kebutuhanDisabilitas = KebutuhanDisabilitas::all();
         $penyakit = Penyakit::all();
-        return view('admin.DataAnak.Anak.create', compact('agama', 'jenisKelamin', 'golonganDarah', 'kebutuhanDisabilitas', 'penyakit','lokasiTugas'));
+
+        return view('admin.DataAnak.Anak.create', compact('agama', 'jenis_kelamin', 'golongan_darah', 'jenis_disabilitas', 'penyakit', 'lokasiTugas'));
     }
 
     /**
@@ -71,87 +159,75 @@ class AnakController extends Controller
         ]);
 
         try {
-
-
-       // Generate NIA
-       $lokasi_id = str_pad($request->lokasi_id ?? 0, 1, '0', STR_PAD_LEFT);
-       $tipe_anak = $request->tipe_anak == 'disabilitas' ? '01' : '02';
-       $tahun_masuk = date('y');
-       $tahun_lahir = substr(date('Y', strtotime($request->tanggal_lahir)), -2);
-
-       $latest_anak = Anak::where('lokasi_id', $request->lokasi_id)
-                          ->where('tipe_anak', $request->tipe_anak)
-                          ->latest()
-                          ->first();
-
-       $nomor_urut = $latest_anak ? ((int) substr($latest_anak->nia, -3)) + 1 : 1;
-
-       $nia = $lokasi_id . $tipe_anak . $tahun_masuk . $tahun_lahir . str_pad($nomor_urut, 3, '0', STR_PAD_LEFT);
-
-
-        $anak = Anak::create([
-            'nama_lengkap' => $request->nama_lengkap,
-            'agama_id' => $request->agama_id,
-            'jenis_kelamin_id' => $request->jenis_kelamin_id,
-            'golongan_darah_id' => $request->golongan_darah_id,
-            'kebutuhan_disabilitas_id' => $request->kebutuhan_disabilitas_id,
-            'penyakit_id' => $request->penyakit_id,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'disukai' => $request->disukai,
-            'tidak_disukai' => $request->tidak_disukai,
-            'alamat' => $request->alamat,
-            'kelebihan' => $request->kelebihan,
-            'kekurangan' => $request->kekurangan,
-            'status' => 'aktif',
-            'lokasi_id' => $request->lokasi_id,
-            'tanggal_masuk' => now(),
-            'tipe_anak' => $request->tipe_anak,
-            'nia' => $nia, // Simpan NIA yang baru diambil
-        ]);
-
-
-        if ($request->tipe_anak == 'disabilitas') {
-            AnakDisabilitas::create([
-                'anak_id' => $anak->id, // Gunakan $anak->id bukan $anak->anak_id
-                'nama_lengkap' => $anak->nama_lengkap,
-                'tipe_anak' => 'disabilitas',
+            // Simpan data anak di Laravel
+            $anak = Anak::create([
+                'nama_lengkap' => $request->nama_lengkap,
+                'penyakit_id' => $request->penyakit_id,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'disukai' => $request->disukai,
+                'tidak_disukai' => $request->tidak_disukai,
+                'alamat' => $request->alamat,
+                'kelebihan' => $request->kelebihan,
+                'kekurangan' => $request->kekurangan,
+                'status' => 'aktif',
+                'lokasi_id' => $request->lokasi_id,
+                'tanggal_masuk' => now(),
+                'tipe_anak' => $request->tipe_anak,
             ]);
-        } elseif ($request->tipe_anak == 'non_disabilitas') {
-            AnakNonDisabilitas::create([
-                'anak_id' => $anak->id, // Gunakan $anak->id bukan $anak->anak_id
-                'nama_lengkap' => $anak->nama_lengkap,
-                'tipe_anak' => 'non_disabilitas',
-            ]);
-        }
 
-        // Mengelola upload foto profil
-        if ($request->hasFile('foto_profil')) {
-            $gambar = $request->file('foto_profil');
-            $slug = Str::slug(pathinfo($gambar->getClientOriginalName(), PATHINFO_FILENAME));
-            $new_gambar = time() . '_' . $slug . '.' . $gambar->getClientOriginalExtension();
-
-            // Pindahkan gambar ke direktori yang diinginkan
-            $gambar->move('uploads/anak/', $new_gambar);
-
-            // Update path gambar pada entitas anak yang ada
-            $anak->foto_profil = 'uploads/anak/' . $new_gambar;
+            // Generate NIA
+            $lokasi_id = str_pad($request->lokasi_id ?? 0, 1, '0', STR_PAD_LEFT);
+            $tipe_anak = $request->tipe_anak == 'disabilitas' ? '01' : '02';
+            $tahun_masuk = date('y');
+            $tahun_lahir = substr(date('Y', strtotime($request->tanggal_lahir)), -2);
+            $latest_anak = Anak::where('lokasi_id', $request->lokasi_id)
+                ->where('tipe_anak', $request->tipe_anak)
+                ->latest()
+                ->first();
+            $nomor_urut = $latest_anak ? ((int) substr($latest_anak->nia, -3)) + 1 : 1;
+            $nia = $lokasi_id . $tipe_anak . $tahun_masuk . $tahun_lahir . str_pad($nomor_urut, 3, '0', STR_PAD_LEFT);
+            $anak->nia = $nia;
             $anak->save();
-        }
 
-            return redirect()->route('anak.index')->with('success', 'Data anak berhasil ditambahkan.');
-                } catch (\Exception $e) {
-            return redirect()->back()->withInput()->withErrors(['error' => 'Terjadi kesalahan. Silakan coba lagi.']);
+            // Persiapan data yang akan dikirim ke backend Go
+            $data = [
+                'agama' => $request->input('agama'),
+                'jenis_kelamin' => $request->input('jenis_kelamin'),
+                'golongan_darah' => $request->input('golongan_darah'),
+                'jenis_disabilitas' => $request->input('jenis_disabilitas'),
+            ];
+
+            // Kirim data ke backend Go untuk Agama
+            $responseAgama = Http::post('http://localhost:2222/api/agama', $data);
+            // Kirim data ke backend Go untuk Jenis Kelamin
+            $responseJenisKelamin = Http::post('http://localhost:2220/api/jenis_kelamin', $data);
+            // Kirim data ke backend Go untuk Golongan Darah
+            $responseGolonganDarah = Http::post('http://localhost:9999/api/golongan_darah', $data);
+            // Kirim data ke backend Go untuk Jenis Disabilitas
+            $responseJenisDisabilitas = Http::post('http://localhost:1110/api/jenis_disabilitas', $data);
+
+            if (
+                $responseAgama->successful() && $responseJenisKelamin->successful() &&
+                $responseGolonganDarah->successful() && $responseJenisDisabilitas->successful()
+            ) {
+                return redirect()->route('anak.index')->with('success', 'Data anak berhasil ditambahkan.');
+            } else {
+                // Penanganan jika gagal menyimpan data di backend Go
+                return back()->withInput()->with('error', 'Failed to create anak. Please try again.');
+            }
+        } catch (Exception $e) {
+            // Tangani exception jika terjadi kesalahan
+            return back()->withInput()->with('error', 'An error occurred. Please try again.');
         }
     }
-
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $anak = Anak::with('agama', 'jenisKelamin', 'golonganDarah', 'kebutuhanDisabilitas', 'penyakit','lokasiTugas')->find($id);
+        $anak = Anak::with('agama', 'jenisKelamin', 'golonganDarah', 'kebutuhanDisabilitas', 'penyakit', 'lokasiTugas')->find($id);
         $penyakit = $anak->penyakit;
 
         return view('admin.DataAnak.Anak.show', compact('anak', 'penyakit'));
@@ -175,7 +251,7 @@ class AnakController extends Controller
             return redirect()->route('anak.index')->with('error', 'Data anak tidak ditemukan.');
         }
 
-        return view('admin.DataAnak.Anak.edit', compact('anak', 'agama', 'jenisKelamin', 'golonganDarah', 'kebutuhanDisabilitas', 'penyakit','lokasiTugas'));
+        return view('admin.DataAnak.Anak.edit', compact('anak', 'agama', 'jenisKelamin', 'golonganDarah', 'kebutuhanDisabilitas', 'penyakit', 'lokasiTugas'));
     }
 
     /**
@@ -310,25 +386,25 @@ class AnakController extends Controller
     public function generatePDF($id)
     {
         $anak = Anak::findOrFail($id);
-    
+
         // Load view content into a variable
         $pdfView = view('admin.DataAnak.anak.pdf', compact('anak'))->render();
-    
+
         // Setup Dompdf options
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isPhpEnabled', true);
         $options->set('isRemoteEnabled', true);
-    
+
         // Instantiate Dompdf with options
         $dompdf = new Dompdf($options);
-    
+
         // Load HTML content into Dompdf
         $dompdf->loadHtml($pdfView);
-    
+
         // Set paper size and orientation
         $dompdf->setPaper('A4', 'portrait');
-    
+
         // Create stream context to disable SSL verification
         $context = stream_context_create([
             'ssl' => [
@@ -337,22 +413,22 @@ class AnakController extends Controller
                 'allow_self_signed' => true,
             ],
         ]);
-    
+
         // Set stream context for Dompdf
         $dompdf->setHttpContext($context);
-    
+
         // Render PDF (optional: save to file)
         $dompdf->render();
-    
+
         // Get child's name for PDF filename
         $filename = 'anak_profile_' . str_replace(' ', '_', $anak->nama_lengkap) . '.pdf';
 
-    // Output PDF to browser
-    return $dompdf->stream($filename);
-}
+        // Output PDF to browser
+        return $dompdf->stream($filename);
+    }
 
-public function exportExcel()
-{
-    return Excel::download(new ExportAnak, 'anak.xlsx');
-}
+    public function exportExcel()
+    {
+        return Excel::download(new ExportAnak, 'anak.xlsx');
+    }
 }

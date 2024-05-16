@@ -111,9 +111,9 @@ class AgamaController extends Controller
         $response = Http::delete("http://localhost:2222/api/agama/{$id}");
 
         if ($response->successful()) {
-            return redirect()->route('admin.masterdata.agama.index')->with('success', 'Brand deleted successfully.');
+            return redirect()->route('admin.masterdata.agama.index')->with('success', 'Agama deleted successfully.');
         } else {
-            return back()->with('error', 'Failed to delete brand. Please try again.');
+            return back()->with('error', 'Failed to delete agama. Please try again.');
         }
     }
 }

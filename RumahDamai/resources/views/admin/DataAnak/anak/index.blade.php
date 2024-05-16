@@ -17,7 +17,6 @@
                         <a href="{{ route('anak.create') }}" class="btn btn-success ml-2">Tambah Anak</a>
                     </div>
                 </div>
-                
 
                 <div class="table-responsive">
                     <table class="table mt-3 table-hover">
@@ -35,7 +34,7 @@
                                 <tr>
                                     <td><img src="{{ asset($anak->foto_profil) }}" alt=""></td>
                                     <td>{{ $anak->nama_lengkap }}</td>
-                                    <td>{{ $anak->jenisKelamin->jenis_kelamin }}</td>
+                                    <td>{{ $anak->jenisKelamin ? $anak->jenisKelamin->jenis_kelamin : 'Tidak ada data' }}</td>
                                     <td>{{ $anak->status }}</td>
                                     <td>
                                         <a href="{{ route('anak.show', $anak->id) }}" class="btn btn-info">Detail</a>

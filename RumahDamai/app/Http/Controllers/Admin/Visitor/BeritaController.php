@@ -17,7 +17,7 @@ class BeritaController extends Controller
     public function index()
     {
         try {
-            $response = Http::get('http://localhost:9003/api/category');
+            $response = Http::get('http://localhost:9991/api/category');
             $categories = collect($response->json())->map(function ($category) {
                 return [
                     'id' => $category['ID'],
@@ -30,7 +30,7 @@ class BeritaController extends Controller
 
 
         try {
-            $response = Http::get("http://localhost:9004/api/news");
+            $response = Http::get("http://localhost:9992/api/news");
             $berita = $response->json();
         } catch (\Exception $e) {
             $berita = [];
@@ -43,7 +43,7 @@ class BeritaController extends Controller
      */
     public function create()
     {
-        $response = Http::get('http://localhost:9003/api/category');
+        $response = Http::get('http://localhost:9991/api/category');
         $category = collect($response->json())->map(function ($category) {
             return [
                 'id' => $category['ID'],
@@ -86,7 +86,7 @@ class BeritaController extends Controller
             'image' => $imagePath ?? null,
         ];
 
-        $response = Http::post('http://localhost:9004/api/news', $data);
+        $response = Http::post('http://localhost:9992/api/news', $data);
 
         if ($response->successful()) {
             return redirect()->route('berita.index')->with('success', 'Product created successfully.');
@@ -99,7 +99,7 @@ class BeritaController extends Controller
      */
     public function show(string $id)
     {
-        $response = Http::get('http://localhost:9003/api/category');
+        $response = Http::get('http://localhost:9991/api/category');
         $categories = collect($response->json())->map(function ($category) {
             return [
                 'id' => $category['ID'],
@@ -107,7 +107,7 @@ class BeritaController extends Controller
             ];
         })->toArray();
 
-        $response = Http::get("http://localhost:9004/api/news/{$id}");
+        $response = Http::get("http://localhost:9992/api/news/{$id}");
         if ($response->successful()) {
             $berita = $response->json();
 
@@ -122,7 +122,7 @@ class BeritaController extends Controller
      */
     public function edit($id)
     {
-        $response = Http::get('http://localhost:9003/api/category');
+        $response = Http::get('http://localhost:9991/api/category');
         $categories = collect($response->json())->map(function ($category) {
             return [
                 'id' => $category['ID'],
@@ -130,7 +130,7 @@ class BeritaController extends Controller
             ];
         })->toArray();
 
-        $response = Http::get("http://localhost:9004/api/news/{$id}");
+        $response = Http::get("http://localhost:9992/api/news/{$id}");
 
         if ($response->successful()) {
             $berita = $response->json();
@@ -154,7 +154,7 @@ class BeritaController extends Controller
         ]);
 
         // Retrieve the existing product to get the current image path
-        $existingNewsResponse = Http::get("http://localhost:9004/api/news/{$id}");
+        $existingNewsResponse = Http::get("http://localhost:9992/api/news/{$id}");
         $existingNews = $existingNewsResponse->json();
 
 
@@ -182,7 +182,7 @@ class BeritaController extends Controller
             'image' => $request->hasFile('image') ? $imagePath : $existingNews['image'],
         ];
 
-        $response = Http::put("http://localhost:9004/api/news/{$id}", $data);
+        $response = Http::put("http://localhost:9992/api/news/{$id}", $data);
 
         if ($response->successful()) {
             return redirect()->route('berita.index')->with('success', 'Product updated successfully.');
@@ -199,7 +199,7 @@ class BeritaController extends Controller
     public function destroy($id)
     {
         // Retrieve the existing promoted to get the image path
-        $existingnewsResponse = Http::get("http://localhost:9004/api/news/{$id}");
+        $existingnewsResponse = Http::get("http://localhost:9992/api/news/{$id}");
         $existingnews = $existingnewsResponse->json();
 
         // Get the image path from the existing news data
@@ -211,7 +211,7 @@ class BeritaController extends Controller
         }
 
         // Make the HTTP request to delete the news
-        $response = Http::delete("http://localhost:9004/api/news/{$id}");
+        $response = Http::delete("http://localhost:9992/api/news/{$id}");
 
         if ($response->successful()) {
             return redirect()->route('berita.index')->with('success', 'news deleted successfully.');

@@ -37,11 +37,14 @@
                                         <td>
                                             <a href="{{ route('admin.masterdata.agama.edit', $item['ID']) }}"
                                                 class="btn btn-warning">Edit</a>
-                                            <form action="{{ route('admin.masterdata.agama.destroy', $item['ID']) }}"
-                                                method="POST" class="d-inline">
+                                            <form method="POST" id="deleteForm{{ $item['ID'] }}" class="d-inline"
+                                                action="{{ route('admin.masterdata.agama.destroy', $item['ID']) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn btn-danger">Delete</button>
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="handleDeleteConfirmation('deleteForm{{ $item['ID'] }}')">
+                                                    Hapus
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>

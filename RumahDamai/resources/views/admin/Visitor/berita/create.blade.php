@@ -5,7 +5,7 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <h2 class="card-title">Tambah Anak</h2>
+            <h2 class="card-title">Tambah Berita</h2>
             <form action="{{ route('berita.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
 
@@ -24,7 +24,7 @@
                         @endforeach
                     </select>
                 </div>
-                
+
 
                 <div class="form-group">
                     <label for="deskripsi">Deskripsi<span style="color: red">*</span></label>

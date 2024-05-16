@@ -29,5 +29,5 @@ func main() {
 		categoryRoutes.PUT("/:id", categoryController.Update)
 		categoryRoutes.DELETE("/:id", categoryController.Delete)
 	}
-	r.Run(":9003")
+	r.Run(":9991")
 }
