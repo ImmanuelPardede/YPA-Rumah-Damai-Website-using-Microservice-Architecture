@@ -15,14 +15,13 @@ class AgamaController extends Controller
      */
     public function index()
     {
-        $response = Http::get('http://localhost:2222/api/agama');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:2222/api/agama");
             $agama = $response->json();
-            return view('admin.masterdata.agama.index', compact('agama'));
-        } else {
-            return back()->with('error', 'Failed to fetch agama from API.');
+        } catch (\Exception $e) {
+            $agama = [];
         }
+        return view('admin.masterdata.agama.index', compact('agama'));
     }
 
     /**

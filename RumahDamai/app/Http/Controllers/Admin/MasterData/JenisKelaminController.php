@@ -12,14 +12,13 @@ class JenisKelaminController extends Controller
 {
     public function index()
     {
-        $response = Http::get('http://localhost:2220/api/jenis_kelamin');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:2220/api/jenis_kelamin");
             $jenis_kelamin = $response->json();
-            return view('admin.masterdata.jenisKelamin.index', compact('jenis_kelamin'));
-        } else {
-            return back()->with('error', 'Failed to fetch jenisKelamin from API.');
+        } catch (\Exception $e) {
+            $jenis_kelamin = [];
         }
+        return view('admin.masterdata.jenisKelamin.index', compact('jenis_kelamin'));
     }
 
     public function create()

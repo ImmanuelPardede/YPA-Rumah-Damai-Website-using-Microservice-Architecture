@@ -10,19 +10,18 @@ use Illuminate\Support\Facades\Http;
 
 class PekerjaanController extends Controller
 {
-      /**
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $response = Http::get('http://localhost:3330/api/jenis_pekerjaan');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:3330/api/jenis_pekerjaan");
             $jenis_pekerjaan = $response->json();
-            return view('admin.masterdata.pekerjaan.index', compact('jenis_pekerjaan'));
-        } else {
-            return back()->with('error', 'Failed to fetch pekerjaan from API.');
+        } catch (\Exception $e) {
+            $jenis_pekerjaan = [];
         }
+        return view('admin.masterdata.pekerjaan.index', compact('jenis_pekerjaan'));
     }
 
     /**

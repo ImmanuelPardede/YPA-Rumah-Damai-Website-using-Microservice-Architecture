@@ -15,15 +15,13 @@ class PenyakitController extends Controller
      */
     public function index()
     {
-        $response = Http::get('http://localhost:5550/api/jenis_penyakit');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:5550/api/jenis_penyakit");
             $jenis_penyakit = $response->json();
-            return view('admin.masterdata.penyakit.index', compact('jenis_penyakit'));
-        } else {
-            return back()->with('error', 'Failed to fetch penyakit from API.');
+        } catch (\Exception $e) {
+            $jenis_penyakit = [];
         }
-
+        return view('admin.masterdata.penyakit.index', compact('jenis_penyakit'));
     }
 
     /**

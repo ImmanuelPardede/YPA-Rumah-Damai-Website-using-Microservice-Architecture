@@ -8,7 +8,6 @@ use App\Models\Sponsorship;
 use Illuminate\Support\Facades\Http;
 
 
-
 class SponsorshipController extends Controller
 {
     /**
@@ -16,14 +15,13 @@ class SponsorshipController extends Controller
      */
     public function index()
     {
-        $response = Http::get('http://localhost:6660/api/jenis_sponsorship');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:6660/api/jenis_sponsorship");
             $jenis_sponsorship = $response->json();
-            return view('admin.masterdata.sponsorship.index', compact('jenis_sponsorship'));
-        } else {
-            return back()->with('error', 'Failed to fetch sponsorship from API.');
+        } catch (\Exception $e) {
+            $jenis_sponsorship = [];
         }
+        return view('admin.masterdata.sponsorship.index', compact('jenis_sponsorship'));
     }
 
     /**
@@ -79,12 +77,12 @@ class SponsorshipController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-{
-    $response = Http::get("http://localhost:6660/api/jenis_sponsorship/{$id}");
-    $jenis_sponsorship = $response->json();
+    {
+        $response = Http::get("http://localhost:6660/api/jenis_sponsorship/{$id}");
+        $jenis_sponsorship = $response->json();
 
-    return view('admin.masterdata.sponsorship.edit', compact('jenis_sponsorship'));
-}
+        return view('admin.masterdata.sponsorship.edit', compact('jenis_sponsorship'));
+    }
 
 
     /**

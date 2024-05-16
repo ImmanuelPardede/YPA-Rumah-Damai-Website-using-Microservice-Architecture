@@ -16,29 +16,26 @@ class BeritaController extends Controller
      */
     public function index()
     {
+        try {
+            $response = Http::get('http://localhost:9003/api/category');
+            $categories = collect($response->json())->map(function ($category) {
+                return [
+                    'id' => $category['ID'],
+                    'name' => $category['name'] // Menggunakan kunci 'name' dari respons JSON
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            $categories = [];
+        }
+
 
         try {
-
-        $response = Http::get('http://localhost:9003/api/category');
-        $categories = collect($response->json())->map(function ($category) {
-            return [
-                'id' => $category['ID'],
-                'name' => $category['name'] // Menggunakan kunci 'name' dari respons JSON
-            ];
-        })->toArray();
-
-    } catch (\Exception $e) {
-        $categories = [];
-    }
-    
-
-            try {
-                $response = Http::get("http://localhost:9004/api/news");
-                $berita = $response->json();
-            } catch (\Exception $e) {
-                $berita = [];
-            }
-            return view('admin.visitor.berita.index', compact('categories', 'berita'));
+            $response = Http::get("http://localhost:9004/api/news");
+            $berita = $response->json();
+        } catch (\Exception $e) {
+            $berita = [];
+        }
+        return view('admin.visitor.berita.index', compact('categories', 'berita'));
     }
 
     /**
@@ -55,8 +52,6 @@ class BeritaController extends Controller
         })->toArray();
 
         return view('admin.visitor.berita.create', compact('category'));
-
-       
     }
 
     /**
@@ -70,7 +65,7 @@ class BeritaController extends Controller
             'judul' => 'required',
             'deskripsi' => 'required',
         ]);
-    
+
         $category_id = (int) $request->input('category_id');
 
         if ($request->hasFile('image')) {
@@ -98,8 +93,6 @@ class BeritaController extends Controller
         } else {
             return back()->withInput()->with('error', 'Failed to create product. Please try again.');
         }
-
-        
     }
     /**
      * Display the specified resource.
@@ -136,18 +129,17 @@ class BeritaController extends Controller
                 'name' => $category['name'] // Menggunakan kunci 'name' dari respons JSON
             ];
         })->toArray();
-        
+
         $response = Http::get("http://localhost:9004/api/news/{$id}");
-    
+
         if ($response->successful()) {
             $berita = $response->json();
             return view('admin.visitor.berita.edit', compact('berita', 'categories'));
         } else {
             return back()->with('error', 'Failed to fetch products from API.');
         }
+    }
 
-        }
-    
 
     /**
      * Update the specified resource in storage.
@@ -160,75 +152,71 @@ class BeritaController extends Controller
             'judul' => 'required',
             'deskripsi' => 'required',
         ]);
-    
- // Retrieve the existing product to get the current image path
- $existingNewsResponse = Http::get("http://localhost:9004/api/news/{$id}");
- $existingNews = $existingNewsResponse->json();
+
+        // Retrieve the existing product to get the current image path
+        $existingNewsResponse = Http::get("http://localhost:9004/api/news/{$id}");
+        $existingNews = $existingNewsResponse->json();
 
 
         // Temukan berita berdasarkan ID
-       // Handle the image upload
-    $imagePath = $existingNews['image'] ?? null;
-    if ($request->hasFile('image')) {
-        // Delete the old image if it exists
+        // Handle the image upload
+        $imagePath = $existingNews['image'] ?? null;
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('news', $imageName, 'public');
+        }
+
+        $category_id = (int) $request->input('category_id');
+
+        // Prepare the data for the HTTP request
+        $data = [
+            'judul' => $request->input('judul'),
+            'deskripsi' => $request->input('deskripsi'),
+            'category_id' => $category_id,
+            'image' => $request->hasFile('image') ? $imagePath : $existingNews['image'],
+        ];
+
+        $response = Http::put("http://localhost:9004/api/news/{$id}", $data);
+
+        if ($response->successful()) {
+            return redirect()->route('berita.index')->with('success', 'Product updated successfully.');
+        } else {
+            // Delete the uploaded image if the request failed
+            if ($request->hasFile('image') && $imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+            return back()->withInput()->with('error', 'Failed to update product. Please try again.');
+        }
+    }
+
+
+    public function destroy($id)
+    {
+        // Retrieve the existing promoted to get the image path
+        $existingnewsResponse = Http::get("http://localhost:9004/api/news/{$id}");
+        $existingnews = $existingnewsResponse->json();
+
+        // Get the image path from the existing news data
+        $imagePath = $existingnews['image'] ?? null;
+
+        // If the image path exists and the image file exists in storage, delete it
         if ($imagePath && Storage::disk('public')->exists($imagePath)) {
             Storage::disk('public')->delete($imagePath);
         }
 
-        $image = $request->file('image');
-        $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $imagePath = $image->storeAs('news', $imageName, 'public');
-    }
+        // Make the HTTP request to delete the news
+        $response = Http::delete("http://localhost:9004/api/news/{$id}");
 
-    $category_id = (int) $request->input('category_id');
-
-    // Prepare the data for the HTTP request
-    $data = [
-        'judul' => $request->input('judul'),
-        'deskripsi' => $request->input('deskripsi'),
-        'category_id' => $category_id,
-        'image' => $request->hasFile('image') ? $imagePath : $existingNews['image'],
-    ];
-
-    $response = Http::put("http://localhost:9004/api/news/{$id}", $data);
-
-    if ($response->successful()) {
-        return redirect()->route('berita.index')->with('success', 'Product updated successfully.');
-    } else {
-        // Delete the uploaded image if the request failed
-        if ($request->hasFile('image') && $imagePath) {
-            Storage::disk('public')->delete($imagePath);
+        if ($response->successful()) {
+            return redirect()->route('berita.index')->with('success', 'news deleted successfully.');
+        } else {
+            return back()->with('error', 'Failed to delete news. Please try again.');
         }
-        return back()->withInput()->with('error', 'Failed to update product. Please try again.');
     }
-
-        
-    }
-    
-
-    public function destroy($id)
-    {
-   // Retrieve the existing promoted to get the image path
-   $existingnewsResponse = Http::get("http://localhost:9004/api/news/{$id}");
-   $existingnews = $existingnewsResponse->json();
-
-   // Get the image path from the existing news data
-   $imagePath = $existingnews['image'] ?? null;
-
-   // If the image path exists and the image file exists in storage, delete it
-   if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-       Storage::disk('public')->delete($imagePath);
-   }
-
-   // Make the HTTP request to delete the news
-   $response = Http::delete("http://localhost:9004/api/news/{$id}");
-
-   if ($response->successful()) {
-       return redirect()->route('berita.index')->with('success', 'news deleted successfully.');
-   } else {
-       return back()->with('error', 'Failed to delete news. Please try again.');
-   }
-   }
-    
-    
-    }
+}

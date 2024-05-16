@@ -10,19 +10,18 @@ use Illuminate\Support\Facades\Http;
 
 class DisabilitasController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $response = Http::get('http://localhost:1110/api/jenis_disabilitas');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:1110/api/jenis_disabilitas");
             $jenis_disabilitas = $response->json();
-            return view('admin.masterdata.disabilitas.index', compact('jenis_disabilitas'));
-        } else {
-            return back()->with('error', 'Failed to fetch jenis_disabilitas from API.');
+        } catch (\Exception $e) {
+            $jenis_disabilitas = [];
         }
+        return view('admin.masterdata.disabilitas.index', compact('jenis_disabilitas'));
     }
 
     /**

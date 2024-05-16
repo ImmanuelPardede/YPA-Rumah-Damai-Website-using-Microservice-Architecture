@@ -15,13 +15,13 @@ class KategoriBeritaController extends Controller
      */
     public function index()
     {
-
-        $response = Http::get('http://localhost:9003/api/category');
-        $categories = $response->json();
-
-        return view('admin.masterdata.kategoriBerita.index', compact('categories'));
-
-        
+        try {
+            $response = Http::get("http://localhost:9003/api/category");
+            $category = $response->json();
+        } catch (\Exception $e) {
+            $category = [];
+        }
+        return view('admin.masterdata.kategoriBerita.index', compact('category'));
     }
 
     /**
@@ -42,7 +42,7 @@ class KategoriBeritaController extends Controller
             'name' => 'required|string|max:255', // Contoh validasi untuk nama kategori
             // Tambahkan validasi untuk field lain jika ada
         ]);
-    
+
         // Kirim data ke API untuk membuat kategori baru
         $response = Http::post('http://localhost:9003/api/category', [
             'name' => $request->input('name'),
@@ -57,7 +57,7 @@ class KategoriBeritaController extends Controller
             return back()->withInput()->with('error', 'Failed to create category. Please try again.');
         }
 
-        
+
     }
 
     /**
@@ -89,7 +89,7 @@ class KategoriBeritaController extends Controller
             'name' => 'required|string|max:255', // Contoh validasi untuk nama kategori
             // Tambahkan validasi untuk field lain jika ada
         ]);
-    
+
         // Kirim data ke API untuk mengupdate kategori
         $response = Http::put("http://localhost:9003/api/category/{$id}", [
             'name' => $request->input('name'),
@@ -112,7 +112,7 @@ class KategoriBeritaController extends Controller
     public function destroy(string $id)
     {
         $response = Http::delete("http://localhost:9003/api/category/{$id}");
-    
+
         // Periksa jika respons dari API adalah sukses atau tidak
         if ($response->successful()) {
             // Jika sukses, redirect ke halaman daftar kategori dengan pesan sukses
@@ -121,6 +121,6 @@ class KategoriBeritaController extends Controller
             // Jika gagal, kembalikan ke halaman daftar kategori dengan pesan error
             return back()->with('error', 'Failed to delete category. Please try again.');
         }
-    
+
     }
 }

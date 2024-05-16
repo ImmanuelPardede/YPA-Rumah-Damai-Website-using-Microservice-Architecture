@@ -10,19 +10,18 @@ use Illuminate\Support\Facades\Http;
 
 class PendidikanController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $response = Http::get('http://localhost:4440/api/jenis_pendidikan');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:4440/api/jenis_pendidikan");
             $jenis_pendidikan = $response->json();
-            return view('admin.masterdata.pendidikan.index', compact('jenis_pendidikan'));
-        } else {
-            return back()->with('error', 'Failed to fetch pendidikan from API.');
+        } catch (\Exception $e) {
+            $jenis_pendidikan = [];
         }
+        return view('admin.masterdata.pendidikan.index', compact('jenis_pendidikan'));
     }
 
     /**

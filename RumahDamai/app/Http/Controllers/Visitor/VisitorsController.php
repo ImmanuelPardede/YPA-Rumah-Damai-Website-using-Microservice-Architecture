@@ -34,33 +34,32 @@ class VisitorsController extends Controller
             $carousel = [];
         }
 
-    try {
-        $response = Http::get('http://localhost:9002/api/history');
-        $history = $response->json();
-    } catch (\Exception $e) {
-        $history = [];
-    }
+        try {
+            $response = Http::get('http://localhost:9002/api/history');
+            $history = $response->json();
+        } catch (\Exception $e) {
+            $history = [];
+        }
 
-    try {
-        $response = Http::get("http://localhost:9003/api/category");
-        $category = $response->json();
-    } catch (\Exception $e) {
-        $category = [];
-    }
-    
-    try {
-        $response = Http::get("http://localhost:9004/api/news");
-        $berita = $response->json();
-    } catch (\Exception $e) {
-        $berita = [];
-    }
+        try {
+            $response = Http::get("http://localhost:9003/api/category");
+            $category = $response->json();
+        } catch (\Exception $e) {
+            $category = [];
+        }
+
+        try {
+            $response = Http::get("http://localhost:9004/api/news");
+            $berita = $response->json();
+        } catch (\Exception $e) {
+            $berita = [];
+        }
 
         $totalProgram = DetailProgram::count();
         $kategori = KategoriBerita::all();
         $anaktepi = AnakDisabilitas::count();
         $anakdisabilitas = AnakNonDisabilitas::count();
-        return view('visitor.home', compact('carousel','history','berita','totalProgram','category','anaktepi','anakdisabilitas'));
-
+        return view('visitor.home', compact('carousel', 'history', 'berita', 'totalProgram', 'category', 'anaktepi', 'anakdisabilitas'));
     }
 
     public function aboutUs()
@@ -74,14 +73,14 @@ class VisitorsController extends Controller
         $programs = Program::all();
         $detailPrograms = DetailProgram::all();
         $totalProgram = DetailProgram::count();
-        return view('visitor.program', compact('programs','detailPrograms','totalProgram'));
+        return view('visitor.program', compact('programs', 'detailPrograms', 'totalProgram'));
     }
 
     public function fasilitasi()
     {
         $fasilitas = Fasilitas::all();
         $detailfasilitas = Fasilitas::all();
-        return view('visitor.fasilitas',compact('fasilitas','detailfasilitas'));
+        return view('visitor.fasilitas', compact('fasilitas', 'detailfasilitas'));
     }
 
     public function news()
@@ -101,34 +100,34 @@ class VisitorsController extends Controller
         }
 
 
-        return view('visitor.berita', compact('berita','category'));
+        return view('visitor.berita', compact('berita', 'category'));
     }
 
     public function show($id)
     {
         try {
-        $response = Http::get("http://localhost:9003/api/category");
-        $category = $response->json();
-    } catch (\Exception $e) {
-        $category = [];
-    }
+            $response = Http::get("http://localhost:9003/api/category");
+            $category = $response->json();
+        } catch (\Exception $e) {
+            $category = [];
+        }
 
-    try {
-        $response = Http::get("http://localhost:9004/api/news/{$id}");
-        $berita = $response->json();        
-    } catch (\Exception $e) {
-        $berita = [];
-    }
+        try {
+            $response = Http::get("http://localhost:9004/api/news/{$id}");
+            $berita = $response->json();
+        } catch (\Exception $e) {
+            $berita = [];
+        }
 
-    try {
-        $response = Http::get("http://localhost:9004/api/news");
-        $recentNews = $response->json();
-    } catch (\Exception $e) {
-        $recentNews = [];
-    }
+        try {
+            $response = Http::get("http://localhost:9004/api/news");
+            $recentNews = $response->json();
+        } catch (\Exception $e) {
+            $recentNews = [];
+        }
 
         // Mengirim data berita dan recent news ke halaman detail berita
-        return view('visitor.detailberita', compact('berita', 'recentNews','category'));
+        return view('visitor.detailberita', compact('berita', 'recentNews', 'category'));
     }
 
 
@@ -136,14 +135,14 @@ class VisitorsController extends Controller
     {
         $galeri = Galeri::all();
         $detailgaleriCounts = DetailGaleri::groupBy('galeri_id')->pluck(DB::raw('count(*) as total'), 'galeri_id');
-        return view('visitor.galeri', compact('galeri','detailgaleriCounts'));
+        return view('visitor.galeri', compact('galeri', 'detailgaleriCounts'));
     }
 
     public function detailgallery($id)
     {
         $galeri = Galeri::find($id);
         $detailgaleriCounts = DetailGaleri::groupBy('galeri_id')->pluck(DB::raw('count(*) as total'), 'galeri_id');
-        return view('visitor.detailgaleri', compact('galeri','detailgaleriCounts'));
+        return view('visitor.detailgaleri', compact('galeri', 'detailgaleriCounts'));
     }
 
 

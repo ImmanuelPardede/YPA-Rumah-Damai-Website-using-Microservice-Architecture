@@ -13,14 +13,13 @@ class GolonganDarahController extends Controller
      */
     public function index()
     {
-        $response = Http::get('http://localhost:9999/api/golongan_darah');
-
-        if ($response->successful()) {
+        try {
+            $response = Http::get("http://localhost:9999/api/golongan_darah");
             $golongan_darah = $response->json();
-            return view('admin.masterdata.golonganDarah.index', compact('golongan_darah'));
-        } else {
-            return back()->with('error', 'Failed to fetch golongan_darah from API.');
+        } catch (\Exception $e) {
+            $golongan_darah = [];
         }
+        return view('admin.masterdata.golonganDarah.index', compact('golongan_darah'));
     }
 
     /**
