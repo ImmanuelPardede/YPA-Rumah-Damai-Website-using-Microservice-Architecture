@@ -25,41 +25,74 @@ use Illuminate\Support\Facades\Session;
 
 class VisitorsController extends Controller
 {
+
+       
+
     public function home()
     {
-        try {
-            $response = Http::get("http://localhost:9001/api/carousel");
+        $carousel = [];
+        $history = [];
+        $category = [];
+        $berita = [];
+
+        $carouselError = false;
+        $historyError = false;
+        $categoryError = false;
+        $newsError = false;
+        
+        // Fetch carousel data
+    try {
+        $response = Http::get("http://localhost:9001/api/carousel");
+        if ($response->successful()) {
             $carousel = $response->json();
-        } catch (\Exception $e) {
-            $carousel = [];
+        } else {
+            $carouselError = true;
         }
+    } catch (\Exception $e) {
+        $carouselError = true;
+    }
 
-        try {
-            $response = Http::get('http://localhost:9002/api/history');
+    // Fetch history data
+    try {
+        $response = Http::get('http://localhost:9002/api/history');
+        if ($response->successful()) {
             $history = $response->json();
-        } catch (\Exception $e) {
-            $history = [];
+        } else {
+            $historyError = true;
         }
+    } catch (\Exception $e) {
+        $historyError = true;
+    }
 
-        try {
-            $response = Http::get("http://localhost:9003/api/category");
+    // Fetch category data
+    try {
+        $response = Http::get("http://localhost:9003/api/category");
+        if ($response->successful()) {
             $category = $response->json();
-        } catch (\Exception $e) {
-            $category = [];
+        } else {
+            $categoryError = true;
         }
+    } catch (\Exception $e) {
+        $categoryError = true;
+    }
 
-        try {
-            $response = Http::get("http://localhost:9004/api/news");
+    // Fetch news data
+    try {
+        $response = Http::get("http://localhost:9004/api/news");
+        if ($response->successful()) {
             $berita = $response->json();
-        } catch (\Exception $e) {
-            $berita = [];
+        } else {
+            $newsError = true;
         }
+    } catch (\Exception $e) {
+        $newsError = true;
+    }
 
         $totalProgram = DetailProgram::count();
         $kategori = KategoriBerita::all();
         $anaktepi = AnakDisabilitas::count();
         $anakdisabilitas = AnakNonDisabilitas::count();
-        return view('visitor.home', compact('carousel', 'history', 'berita', 'totalProgram', 'category', 'anaktepi', 'anakdisabilitas'));
+        return view('visitor.home', compact('carousel', 'history', 'berita', 'totalProgram', 'category', 'anaktepi', 'anakdisabilitas', 'newsError', 'carouselError', 'historyError','categoryError'));
     }
 
     public function aboutUs()
@@ -85,26 +118,51 @@ class VisitorsController extends Controller
 
     public function news()
     {
+        $category = [];
+        $berita = [];
+
+        $categoryError = false;
+        $newsError = false;
+
+
         try {
             $response = Http::get("http://localhost:9003/api/category");
-            $category = $response->json();
+            if ($response->successful()) {
+                $category = $response->json();
+            } else {
+                $categoryError = true;
+            }
         } catch (\Exception $e) {
-            $category = [];
+            $categoryError = true;
         }
 
         try {
             $response = Http::get("http://localhost:9004/api/news");
-            $berita = $response->json();
+            if ($response->successful()) {
+                $berita = $response->json();
+            } else {
+                $beritaError = true;
+            }
         } catch (\Exception $e) {
-            $berita = [];
+            $beritaError = true;
         }
 
 
-        return view('visitor.berita', compact('berita', 'category'));
+        return view('visitor.berita', compact('berita', 'category', 'categoryError', 'newsError'));
     }
 
     public function show($id)
     {
+
+        $category = [];
+        $berita = [];
+        $recentNews = [];
+       
+        $categoryError = false;
+        $newsError = false;
+        $recentNewsError = false;
+
+
         try {
             $response = Http::get("http://localhost:9003/api/category");
             $category = $response->json();
@@ -114,20 +172,30 @@ class VisitorsController extends Controller
 
         try {
             $response = Http::get("http://localhost:9004/api/news/{$id}");
-            $berita = $response->json();
+            if ($response->successful()) {
+                $berita = $response->json();
+            } else {
+                $beritaError = true;
+            }
         } catch (\Exception $e) {
-            $berita = [];
+            $beritaError = true;
         }
+
 
         try {
             $response = Http::get("http://localhost:9004/api/news");
-            $recentNews = $response->json();
+            if ($response->successful()) {
+                $recentNews = $response->json();
+            } else {
+                $recentNewsError = true;
+            }
         } catch (\Exception $e) {
-            $recentNews = [];
+            $recentNewsError = true;
         }
 
+
         // Mengirim data berita dan recent news ke halaman detail berita
-        return view('visitor.detailberita', compact('berita', 'recentNews', 'category'));
+        return view('visitor.detailberita', compact('berita', 'recentNews', 'category', 'categoryError', 'newsError', 'recentNewsError'));
     }
 
 

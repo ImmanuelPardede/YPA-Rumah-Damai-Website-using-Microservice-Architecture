@@ -1,7 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($golongan_darah))
+@if ($serverError)
         <div class="">
             @include('error.500')
         </div>
@@ -19,13 +19,11 @@
                                 </div>
                             @endif
                         </div>
-                        @if (!empty($golongan_darah))
                             <div class="col-6 text-right">
                                 <a href="{{ route('golonganDarah.create') }}" class="btn btn-success mb-3">Tambah Jenis
                                     Golongan
                                     Darah</a>
                             </div>
-                        @endif
                     </div>
 
                     <div class="table-responsive">

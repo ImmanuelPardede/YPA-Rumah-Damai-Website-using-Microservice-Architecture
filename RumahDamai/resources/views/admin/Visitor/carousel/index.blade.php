@@ -1,10 +1,8 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($carousel))
-        <div class="marquee">
-            @include('error.500')
-        </div>
+    @if ($serverError)
+        @include('error.500')
     @else
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
@@ -17,9 +15,7 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        @if (!empty($carousel))
                             <a href="{{ route('carousel.create') }}" class="btn btn-success mb-3">Add Carousel</a>
-                        @endif
                     </div>
 
                     <div class="table-responsive">

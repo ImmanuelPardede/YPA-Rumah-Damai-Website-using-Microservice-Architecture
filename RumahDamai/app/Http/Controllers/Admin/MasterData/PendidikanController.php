@@ -15,18 +15,23 @@ class PendidikanController extends Controller
      */
     public function index()
     {
+
+        $jenis_pendidikan = [];
+        $serverError = false;
+
         try {
             $response = Http::get("http://localhost:4440/api/jenis_pendidikan");
-            $jenis_pendidikan = $response->json();
+            if ($response->successful()) {
+                $jenis_pendidikan = $response->json();
+            } else {
+                $serverError = true;
+            }
         } catch (\Exception $e) {
-            $jenis_pendidikan = [];
+            $serverError = true;
         }
-        return view('admin.masterdata.pendidikan.index', compact('jenis_pendidikan'));
+        return view('admin.masterdata.pendidikan.index', compact('jenis_pendidikan','serverError'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.masterdata.pendidikan.create');

@@ -1,7 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($donasi))
+@if ($serverError)
         <div class="">
             @include('error.500')
         </div>
@@ -17,9 +17,7 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        @if (!empty($donasi))
-                            <a href="{{ route('donasi.create') }}" class="btn btn-success mb-3">Tambah Jenis Donasi</a>
-                        @endif
+=                            <a href="{{ route('donasi.create') }}" class="btn btn-success mb-3">Tambah Jenis Donasi</a>
                     </div>
 
                     <div class="table-responsive">

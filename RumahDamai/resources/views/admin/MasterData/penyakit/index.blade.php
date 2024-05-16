@@ -1,7 +1,7 @@
 @extends('layouts.management.master')
 
 @section('content')
-    @if (empty($jenis_penyakit))
+@if ($serverError)
         <div class="marquee">
             @include('error.500')
         </div>
@@ -17,9 +17,7 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        @if (!empty($jenis_penyakit))
                             <a href="{{ route('penyakit.create') }}" class="btn btn-success mb-3">Tambah Jenis Penyakit</a>
-                        @endif
                     </div>
 
                     <div class="table-responsive">

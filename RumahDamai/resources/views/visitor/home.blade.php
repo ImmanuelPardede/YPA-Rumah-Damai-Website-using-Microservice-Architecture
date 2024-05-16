@@ -6,8 +6,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-12 p-0">
-                    @if (empty($carousel))
-                        <div class="hero-section hero-section-full-height d-flex justify-content-center align-items-center">
+                    @if ($carouselError)
+                    <div class="hero-section hero-section-full-height d-flex justify-content-center align-items-center">
                             <div class="marquee">
                                 <h1 class="text-center">Mohon Maaf! <br>Terjadi kesalahan pada server</h1>
                             </div>
@@ -111,8 +111,8 @@
     <section class="section-padding section-bg" id="section_2">
         <div class="container">
             <div class="row">
-                @if (empty($history))
-                    <div class="col-12">
+                @if ($historyError)
+                <div class="col-12">
                         <div class="marquee">
                             <h1 class="text-center">Mohon Maaf! <br>Terjadi kesalahan pada server</h1>
                         </div>
@@ -174,8 +174,8 @@
 
                 <div class="col-lg-7 col-12">
                     <div class="news-block">
-                        @if (empty($berita))
-                            <div class="marquee">
+                        @if ($newsError)
+                        <div class="marquee">
                                 <h1 class="text-center">Server bermasalah</h1>
                             </div>
                         @else
@@ -227,7 +227,7 @@
                     </form>
 
                     <h5 class="mt-5 mb-3">Berita Lainnya</h5>
-                    @if (empty($berita))
+                    @if ($newsError)
                         <div class="marquee">
                             <h1 class="text-center">Server bermasalah</h1>
                         </div>
@@ -261,8 +261,8 @@
 
                     <div class="tags-block">
                         <h5 class="mb-3">Kategori</h5>
-                        @if (empty($category))
-                            <div class="marquee">
+                        @if ($categoryError)
+                        <div class="marquee">
                                 <h1 class="text-center">Server bermasalah</h1>
                             </div>
                         @else

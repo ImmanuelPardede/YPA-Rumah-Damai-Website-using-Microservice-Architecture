@@ -13,15 +13,24 @@ class GolonganDarahController extends Controller
      */
     public function index()
     {
+        $golongan_darah = [];
+        $serverError = false;
+        
         try {
             $response = Http::get("http://localhost:9999/api/golongan_darah");
+            $response = Http::get("http://localhost:4444/api/donasi");
+        if ($response->successful()) {
             $golongan_darah = $response->json();
-        } catch (\Exception $e) {
-            $golongan_darah = [];
+        } else {
+            $serverError = true;
         }
-        return view('admin.masterdata.golonganDarah.index', compact('golongan_darah'));
+    } catch (\Exception $e) {
+        $serverError = true;
     }
 
+        return view('admin.masterdata.golonganDarah.index', compact('golongan_darah','serverError'));
+  
+    }
     /**
      * Show the form for creating a new resource.
      */
